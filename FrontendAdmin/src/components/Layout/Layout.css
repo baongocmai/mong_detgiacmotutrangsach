@@ -1,0 +1,34 @@
+/* Tổng thể Layout */
+.layout {
+  justify-content: center;
+  align-items: flex-start; /* Điều chỉnh từ center sang flex-start */
+  display: flex;
+  flex-direction: row; /* Sắp xếp Sidebar và Content cạnh nhau */
+  height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+}
+
+/* Main Content */
+.main-content {
+  display: grid;
+  margin-left: 45px;
+  margin-top: 80px;
+  min-height: calc(100vh - 80px); /* Đảm bảo bao phủ toàn bộ màn hình trừ khoảng header */
+  width: calc(100vw - 140px);
+  padding: 20px; 
+  border: none;
+  background-color: rgba(250, 236, 236, 0.5); /* Độ trong suốt 50% */
+  border-radius: 40px;
+  transition: margin-left 0.3s ease-in-out; /* Thêm hiệu ứng chuyển động */
+  height: auto; /* Cho phép điều chỉnh chiều cao */
+  box-sizing: border-box; /* Bao gồm padding và border vào chiều rộng/chiều cao */
+}
+
+/* Sidebar mở rộng */
+.sidebar-open .main-content {
+  margin-left: 650px;
+}
+
+/* Sidebar thu nhỏ */
+.sidebar-closed .main-content {
+  margin-left: 60px;
+}
