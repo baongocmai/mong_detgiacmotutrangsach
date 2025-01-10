@@ -1,0 +1,119 @@
+/* Đảm bảo FaBars nằm trên cùng */
+.menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: black;
+  position: fixed; /* Định vị cố định */
+  top: 10px; /* Cách cạnh trên */
+  left: 10px; /* Cách cạnh trái */
+  z-index: 1000; /* Đảm bảo luôn ở trên */
+}
+
+/* Sidebar */
+.sidebar-container {
+  position: relative;
+}
+
+.sidebar {
+  background-color: #ffc0cb;
+  height: 100%;
+  width: 50px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.sidebar.open {
+  width: 235px;
+}
+
+.top-section {
+  margin-top: 50px;
+  margin-left:40px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.logo {
+  margin-top:20px ;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.menu {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  font-size: 18px;
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Khi hover vào bất kỳ phần tử nào trong li, cả khối sẽ thay đổi màu */
+.menu-item:hover {
+  background-color: rgb(234, 114, 134); /* Màu nền khi hover */
+  color: white; /* Màu chữ và icon khi hover */
+  font-weight: bold; /* Làm đậm chữ khi hover */
+  border-radius: 40px;
+}
+.menu-item a {
+  text-decoration: none; 
+  display: flex;
+  color: black;
+  align-items: center;
+  gap: 10px;
+}
+.menu-item a:hover, .menu-item:hover svg {
+  color: white;
+}
+
+.bottom {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  opacity: 0; /* Ẩn mặc định */
+  visibility: hidden; /* Ngăn phần tử chiếm không gian */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar.open .bottom {
+  opacity: 1; /* Hiển thị khi Sidebar mở */
+  visibility: visible;
+}
+
+.color-option {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.color-option:nth-child(1) {
+  background-color: #ffc0cb;
+}
+
+.color-option:nth-child(2) {
+  background-color: aquamarine;
+}
+
+.color-option:nth-child(3) {
+  background-color: aqua;
+}
+
