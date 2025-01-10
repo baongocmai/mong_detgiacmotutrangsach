@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./Reset.css";
 
 const Reset = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const navigate = useNavigate(); // Khởi tạo hook điều hướng
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,7 +23,7 @@ const Reset = () => {
 
         if (response.ok) {
             alert("Password reset successfully!");
-            window.location.href = "/login";
+            navigate("/login"); // Chuyển hướng về trang login
         } else {
             alert("Error resetting password. Please try again.");
         }

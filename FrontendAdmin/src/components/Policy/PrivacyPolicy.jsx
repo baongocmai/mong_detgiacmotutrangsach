@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const PrivacyPolicy = () => {
   const [content, setContent] = useState(
-    "This is the privacy policy page. Add your company's privacy policy here."
+    "This is the privacy policy page. Add your company's privacy policy here.".repeat(10)
   );
   const [newContent, setNewContent] = useState(content);
   const [isEditing, setIsEditing] = useState(false);
@@ -53,6 +53,9 @@ const PrivacyPolicy = () => {
                 fontSize: "14px",
                 backgroundColor: "#f9f9f9",
                 borderRadius: "8px",
+                maxWidth : "400px",
+                maxHeight: "150px", 
+                overflow: "auto",
             }}>
             {content}</p>
         )}

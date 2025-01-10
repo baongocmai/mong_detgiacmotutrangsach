@@ -29,7 +29,20 @@ const ContactInfo = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Updating contact info...", contact);
+      // Đặt giá trị mặc định cho các ô không được điền
+      const updatedContact = {
+        ...contact,
+        socialLinks: {
+          facebook: contact.socialLinks.facebook || "Đang cập nhật",
+          twitter: contact.socialLinks.twitter || "Đang cập nhật",
+          instagram: contact.socialLinks.instagram || "Đang cập nhật",
+        },
+        email: contact.email || "Đang cập nhật",
+        phone: contact.phone || "Đang cập nhật",
+        address: contact.address || "Đang cập nhật",
+      };
+
+      console.log("Updating contact info...", updatedContact);
       setMessage("Contact information updated successfully!");
     } catch (error) {
       setMessage("Error updating contact information.");
@@ -39,13 +52,23 @@ const ContactInfo = () => {
   return (
     <div className="contact-info" style={styles.container}>
       <h1>Contact Us</h1>
-      <form className="contact-info-form" style={styles.form}>
-        <div style={styles.column}>
+      <form className="contact-info-form" 
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "20px",
+      }}>
+        <div 
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}>
           <h2>Contact Info</h2>
           <div>
             <MdOutlineMailOutline style={{ color: "grey" }} />
             <input
-              type="text"
+              type="email"
               name="email"
               placeholder="Email"
               value={contact.email}
@@ -56,7 +79,7 @@ const ContactInfo = () => {
           <div>
             <MdPhoneAndroid style={{ color: "purple" }} />
             <input
-              type="text"
+              type="tel"
               name="phone"
               placeholder="Phone"
               value={contact.phone}
@@ -65,7 +88,7 @@ const ContactInfo = () => {
             />
           </div>
           <div>
-            <MdHome style={{color:"brown"}} />
+            <MdHome style={{ color: "brown" }} />
             <input
               type="text"
               name="address"
@@ -78,12 +101,17 @@ const ContactInfo = () => {
         </div>
 
         {/* Right Column */}
-        <div style={styles.column}>
+        <div 
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}>
           <h2>Social Network</h2>
           <div>
             <FaFacebook style={{ color: "blue" }} />
             <input
-              type="text"
+              type="url"
               name="facebook"
               placeholder="Facebook"
               value={contact.socialLinks.facebook}
@@ -94,7 +122,7 @@ const ContactInfo = () => {
           <div>
             <FaTwitterSquare style={{ color: "#1DA1F2" }} />
             <input
-              type="text"
+              type="url"
               name="twitter"
               placeholder="Twitter"
               value={contact.socialLinks.twitter}
@@ -103,9 +131,9 @@ const ContactInfo = () => {
             />
           </div>
           <div>
-            <FaInstagramSquare style={{color: "pink"}} />
+            <FaInstagramSquare style={{ color: "pink" }} />
             <input
-              type="text"
+              type="url"
               name="instagram"
               placeholder="Instagram"
               value={contact.socialLinks.instagram}
@@ -128,18 +156,6 @@ const ContactInfo = () => {
 };
 
 const styles = {
-  form: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "20px",
-  },
-  column: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-  },
-  
-
   input: {
     flex: 1,
     padding: "8px",

@@ -10,7 +10,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import UsersManagement from './pages/Users/UsersManagement';
 import BooksManagement from './pages/Books/BooksManagement';
 import Comments from './pages/Comments/Comments';
-import Reports from './pages/Reports/Reports';
+import Report from './pages/Report/Report';
 import Settings from './pages/Settings/Settings';
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
                 <Route path="/Users" element={<UsersManagement />} />
                 <Route path="/Books" element={<BooksManagement />} />
                 <Route path="/Comments" element={<Comments />} />
-                <Route path="/Reports" element={<Reports />} />
+                <Route path="/Report" element={<Report />} />
                 <Route path="/Settings" element={<Settings />} />
             </Route>
         </Routes>

@@ -53,6 +53,9 @@ const Service = () => {
                 fontSize: "14px",
                 backgroundColor: "#f9f9f9",
                 borderRadius: "8px",
+                maxWidth : "400px",
+                maxHeight: "150px", 
+                overflow: "auto",
             }}>
             {content}</p>
         )}

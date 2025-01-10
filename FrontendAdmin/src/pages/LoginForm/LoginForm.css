@@ -11,7 +11,8 @@
     display: flex;
     justify-content: center; /* Căn giữa nội dung của form */
     align-items: center; /* Căn giữa nội dung của form */
-    overflow: auto
+    overflow: auto;
+    gap:30px;
 }
 
 .wrapper:hover{

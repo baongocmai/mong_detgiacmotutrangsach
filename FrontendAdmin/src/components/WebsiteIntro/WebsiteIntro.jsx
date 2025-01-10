@@ -108,6 +108,9 @@ const WebsiteIntro = () => {
                 fontSize: "14px",
                 backgroundColor: "#f9f9f9",
                 borderRadius: "8px",
+                maxWidth : "700px",
+                maxHeight: "200px", 
+                overflow: "auto",
               }}
             >
               {introContent}
