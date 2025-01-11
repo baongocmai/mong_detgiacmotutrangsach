@@ -1,0 +1,97 @@
+body.dark-mode {
+  background-color: #121212; /* Nền tối */
+  color: #ffffff; /* Chữ sáng */
+}
+.navbar {
+    position: fixed;
+    height: 60px;
+    border-bottom: 0.5px solid rgb(195, 148, 156);
+    font-size: 14px;
+    display: flex;
+    background-color: pink;
+    padding: 0 20px;
+    z-index: 19;
+}
+.wrapper-i{
+    width: 100vw;
+    display: flex;
+    padding: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search input {
+  width: 200px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
+}
+
+.search input:focus {
+  outline: none;
+  width: 250px;
+}
+
+.search svg {
+  position: absolute;
+  right: 10px;
+  color: #888;
+  cursor: pointer;
+}
+
+.items{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 22%;
+}
+.item{
+    
+    font-size: 22px;
+}
+.avatar{
+    border-radius: 50%;
+    height: 33px;
+    width: 33px;
+}
+
+.arrow {
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .dropdown-menu {
+    position: absolute;
+    top: 100%; /* Đảm bảo menu hiện ra dưới navbar */
+    background-color: rgb(242, 192, 242);
+    border: 1px solid #ddd;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    border-radius: 5px;
+    width: 150px;
+    z-index: 10;
+  }
+  
+  .dropdown-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .dropdown-menu li {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .dropdown-menu li:hover {
+    background-color: purple;
+    font-style: italic;
+    font-weight: bold;
+    color:white;
+  }

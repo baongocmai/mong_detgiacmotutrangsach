@@ -1,0 +1,25 @@
+.homepage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw; /* Đảm bảo chiếm toàn bộ chiều rộng màn hình */
+  background-color: rgb(51, 7, 51); /* Màu nền */
+  overflow: hidden;
+  position: relative;
+}
+
+.homepage-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ảnh bao phủ toàn bộ màn hình mà không bị méo */
+  transition: opacity 2s ease-out; /* Hiệu ứng mờ dần */
+}
+
+/* Khi thêm class fade-out */
+.fade-out .homepage-image {
+  opacity: 0; /* Ảnh mờ dần */
+}
