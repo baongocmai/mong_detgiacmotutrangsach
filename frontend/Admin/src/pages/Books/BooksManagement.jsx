@@ -3,7 +3,7 @@ import "./BooksManagement.css";
 import booksIcon from "./books.png";
 import categoriesIcon from "./categories.png";
 import genresIcon from "./genres.png";
-import bgImage from "./bg.png"; 
+import bgImage from "./bg.png";
 import Books from "./Books"
 import Categories from "./Categories"
 import Genres from "./Genres"
@@ -39,37 +39,40 @@ const BooksManagement = () => {
   };
 
   return (
-    <div className="management">
+    <div className="container">
       <h1>Books Management</h1>
-      <div className="icons-container">
-        <div className="icon" onClick={() => handleIconClick("books")}>
-          <img src={booksIcon} alt="Books" />
+      <div className="management">
+
+        <div className="icons-container">
+          <div className="icon" onClick={() => handleIconClick("books")}>
+            <img src={booksIcon} alt="Books" />
+          </div>
+          <div className="icon" onClick={() => handleIconClick("categories")}>
+            <img src={categoriesIcon} alt="Categories" />
+          </div>
+          <div className="icon" onClick={() => handleIconClick("genres")}>
+            <img src={genresIcon} alt="Genres" />
+          </div>
         </div>
-        <div className="icon" onClick={() => handleIconClick("categories")}>
-          <img src={categoriesIcon} alt="Categories" />
-        </div>
-        <div className="icon" onClick={() => handleIconClick("genres")}>
-          <img src={genresIcon} alt="Genres" />
-        </div>
+
+        {activeButton === "books" && (
+          <button className="books-button" type="submit" onClick={() => handleButtonClick("books")}>
+            Books Content
+          </button>
+        )}
+        {activeButton === "categories" && (
+          <button className="books-button" type="submit" onClick={() => handleButtonClick("categories")}>
+            Categories Content
+          </button>
+        )}
+        {activeButton === "genres" && (
+          <button className="books-button" type="submit" onClick={() => handleButtonClick("genres")}>
+            Genres Content
+          </button>
+        )}
+
+        <div className="rendered-content">{content}</div>
       </div>
-
-      {activeButton === "books" && (
-        <button className ="books-button" type="submit" onClick={() => handleButtonClick("books")}>
-          Books Content
-        </button>
-      )}
-      {activeButton === "categories" && (
-        <button className ="books-button" type="submit" onClick={() => handleButtonClick("categories")}>
-          Categories Content
-        </button>
-      )}
-      {activeButton === "genres" && (
-        <button className ="books-button" type="submit" onClick={() => handleButtonClick("genres")}>
-          Genres Content
-        </button>
-      )}
-
-      <div className="rendered-content">{content}</div>
     </div>
   );
 };

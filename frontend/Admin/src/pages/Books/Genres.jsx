@@ -12,36 +12,17 @@ const Genres = () => {
         { id: 7, name: "Kinh dị", quantity: 22, description: "" },
     ]);
 
-    // State cho danh sách thể loại đã lọc
     const [filteredGenres, setFilteredGenres] = useState(genres);
 
-    // Tìm kiếm
     const [search, setSearch] = useState("");
-    
-    const handleSearch = () => {
-        const result = genres.filter((genre) =>
-            genre.name.toLowerCase().includes(search.toLowerCase())
-        );
-        setFilteredGenres(result); 
-    };
-    // State and functions for sorting by quantity
-    const [sortOrder, setSortOrder] = useState("asc"); // 'asc' for ascending, 'desc' for descending
-    // lọc
-    const handleSort = (order) => {
-        setSortOrder(order);
-        const sortedGenres = [...filteredGenres].sort((a, b) => {
-            if (order === "asc") {
-                return a.quantity - b.quantity; 
-            } else {
-                return b.quantity - a.quantity; 
-            }
-        });
-        setFilteredGenres(sortedGenres);
-    };
-
-
-    // Phân trang
+    const [sortOrder, setSortOrder] = useState("asc");
     const [currentPage, setCurrentPage] = useState(1);
+    const [newGenre, setNewGenre] = useState({ name: "", description: "" });
+
+    // Modal state
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [genreToDelete, setGenreToDelete] = useState(null);
+
     const recordsPerPage = 10;
     const totalPages = Math.ceil(filteredGenres.length / recordsPerPage);
 
@@ -49,12 +30,20 @@ const Genres = () => {
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
     const currentRecords = filteredGenres.slice(indexOfFirstRecord, indexOfLastRecord);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
+    const handleSearch = () => {
+        const result = genres.filter((genre) =>
+            genre.name.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredGenres(result);
     };
 
-    // State và hàm xử lý cho việc thêm thể loại
-    const [newGenre, setNewGenre] = useState({ name: "", description: "" });
+    const handleSort = (order) => {
+        setSortOrder(order);
+        const sortedGenres = [...filteredGenres].sort((a, b) => {
+            return order === "asc" ? a.quantity - b.quantity : b.quantity - a.quantity;
+        });
+        setFilteredGenres(sortedGenres);
+    };
 
     const handleAddGenre = () => {
         if (!newGenre.name.trim() || !newGenre.description.trim()) {
@@ -63,11 +52,32 @@ const Genres = () => {
         }
 
         const newId = genres.length ? genres[genres.length - 1].id + 1 : 1;
-        setGenres([
+        const updatedGenres = [
             ...genres,
             { id: newId, name: newGenre.name.trim(), description: newGenre.description.trim() },
-        ]);
+        ];
+
+        setGenres(updatedGenres);
+        setFilteredGenres(updatedGenres);
+
         setNewGenre({ name: "", description: "" });
+    };
+
+    const openDeleteModal = (genreId) => {
+        setGenreToDelete(genreId);
+        setShowDeleteModal(true);
+    };
+
+    const closeDeleteModal = () => {
+        setShowDeleteModal(false);
+        setGenreToDelete(null);
+    };
+
+    const handleDelete = () => {
+        const updatedGenres = genres.filter((genre) => genre.id !== genreToDelete);
+        setGenres(updatedGenres);
+        setFilteredGenres(updatedGenres);
+        closeDeleteModal();
     };
 
     return (
@@ -77,15 +87,16 @@ const Genres = () => {
                     type="text"
                     placeholder="Search by name..."
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)} 
+                    onChange={(e) => setSearch(e.target.value)}
                 />
-                <button onClick={handleSearch}>Search</button>  {}
+                <button onClick={handleSearch}>Search</button>
             </div>
             <div className="sort-container">
                 <button onClick={() => handleSort("asc")}>Low to High</button>
                 <button onClick={() => handleSort("desc")}>High to Low</button>
             </div>
-            {/* Form thêm thể loại mới */}
+
+            {/* Add genre form */}
             <div className="add-form">
                 <input
                     type="text"
@@ -95,7 +106,7 @@ const Genres = () => {
                 />
                 <input
                     type="text"
-                    placeholder="description"
+                    placeholder="Description"
                     value={newGenre.description}
                     onChange={(e) => setNewGenre({ ...newGenre, description: e.target.value })}
                 />
@@ -120,7 +131,10 @@ const Genres = () => {
                             <td>{genre.description}</td>
                             <td>{genre.quantity}</td>
                             <td>
-                                <button>
+                                <button
+                                    className="icon"
+                                    onClick={() => openDeleteModal(genre.id)}
+                                >
                                     <MdDelete />
                                 </button>
                             </td>
@@ -132,8 +146,28 @@ const Genres = () => {
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={handlePageChange}
+                onPageChange={setCurrentPage}
             />
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h3>Do you want to delete this genre?</h3>
+                        <p>
+                            <strong>
+                                {genres.find((genre) => genre.id === genreToDelete)?.name}
+                            </strong>
+                        </p>
+                        <button onClick={handleDelete} className="confirm-btn">
+                            Yes
+                        </button>
+                        <button onClick={closeDeleteModal} className="cancel-btn">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

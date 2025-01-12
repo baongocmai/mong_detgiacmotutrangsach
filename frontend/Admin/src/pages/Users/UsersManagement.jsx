@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import Pagination from "../../components/Pagination/Pagination.jsx";
+import { useNavigate } from "react-router-dom";
 import "./UsersManagement.css";
-import { IoPeopleSharp, IoWarning } from "react-icons/io5";
+import Pagination from "../../components/Pagination/Pagination.jsx";
+import { IoPeopleSharp } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
+import { BsFillPersonVcardFill } from "react-icons/bs";
 
 const UsersManagement = () => {
+  const navigate = useNavigate(); // Khởi tạo useNavigate
   const [users, setUsers] = useState([
     { id: 2341, name: "hoàng tử bé", email: "", status: "Active", createdAt: "2023-12-10" },
     { id: 1442, name: "tôi thấy hoa", email: "", status: "Disabled", createdAt: "2023-12-01" },
@@ -22,8 +25,8 @@ const UsersManagement = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [createdAtFilter, setCreatedAtFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); 
-  const [userToDelete, setUserToDelete] = useState(null); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const recordsPerPage = 10;
 
@@ -31,23 +34,29 @@ const UsersManagement = () => {
   const applyFiltersAndSearch = () => {
     let filtered = users;
 
-    // Apply filters
     if (statusFilter) {
       filtered = filtered.filter(user => user.status === statusFilter);
     }
     if (createdAtFilter) {
-      filtered = filtered.filter(user => user.createdAt === createdAtFilter);
+      filtered = [...filtered].sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        if (createdAtFilter === "Newest") {
+          return dateB - dateA; // Sort descending
+        } else if (createdAtFilter === "Oldest") {
+          return dateA - dateB; // Sort ascending
+        }
+        return 0;
+      });
     }
-
-    // Apply search
     if (search) {
       filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(search.toLowerCase())
-      );
+        user.name.toLowerCase().includes(search.toLowerCase()) ||
+        user.id.toString().includes(search));
     }
 
     setFilteredUsers(filtered);
-    setCurrentPage(1);  // Reset to first page after filtering and search
+    setCurrentPage(1);
   };
 
   const totalPages = Math.ceil(filteredUsers.length / recordsPerPage);
@@ -60,7 +69,6 @@ const UsersManagement = () => {
     setCurrentPage(page);
   };
 
-  // Toggle user status (Active to Disabled and vice versa)
   const toggleStatus = (userId) => {
     const updatedUsers = users.map((user) =>
       user.id === userId
@@ -68,43 +76,44 @@ const UsersManagement = () => {
         : user
     );
     setUsers(updatedUsers);
-    setFilteredUsers(updatedUsers); // Update filtered users as well
+    setFilteredUsers(updatedUsers);
   };
 
-  // Open confirmation modal
   const openDeleteModal = (userId) => {
     setUserToDelete(userId);
     setShowDeleteModal(true);
   };
 
-  // Close confirmation modal
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setUserToDelete(null);
   };
 
-  // Handle delete action
   const handleDelete = () => {
     const updatedUsers = users.filter((user) => user.id !== userToDelete);
     setUsers(updatedUsers);
-    setFilteredUsers(updatedUsers); // Update filtered users as well
-    closeDeleteModal(); // Close the modal after deleting
+    setFilteredUsers(updatedUsers);
+    closeDeleteModal();
+  };
+
+  // Hàm điều hướng tới trang chi tiết người dùng
+  const handleViewUserDetails = (userId) => {
+    navigate(`/users/${userId}`); // Điều hướng tới URL chi tiết
   };
 
   return (
-    <div className="books-container">
-      {/* Tìm kiếm */}
+    <div className="container">
+      <h1>Users Management</h1>
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Search by name..."
+          placeholder="Search by name or id..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <button onClick={applyFiltersAndSearch}>Search</button>
       </div>
 
-      {/* Dropdown Filters */}
       <div className="filter-container">
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">Select Status</option>
@@ -112,15 +121,17 @@ const UsersManagement = () => {
           <option value="Disabled">Disabled</option>
         </select>
 
-        <select value={createdAtFilter} onChange={(e) => setCreatedAtFilter(e.target.value)}>
-          <option value="">Select Created At</option>
-          <option value="2023-12-01">2023-12-01</option>
+        <select
+          value={createdAtFilter}
+          onChange={(e) => setCreatedAtFilter(e.target.value)}
+        >
+          <option value="">Sort</option>
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
         </select>
 
         <button onClick={applyFiltersAndSearch}>Apply</button>
       </div>
-
-      {/* Bảng dữ liệu */}
       <table>
         <thead>
           <tr>
@@ -141,7 +152,7 @@ const UsersManagement = () => {
                 <td>{user.email}</td>
                 <td>{user.status}</td>
                 <td>
-                  <button
+                  <button className="icon"
                     style={{
                       color: user.status === "Active" ? "red" : "green",
                     }}
@@ -149,10 +160,10 @@ const UsersManagement = () => {
                   >
                     <IoPeopleSharp />
                   </button>
-                  <button>
-                    <IoWarning />
+                  <button className="icon" onClick={() => handleViewUserDetails(user.id)}> {/* Điều hướng */}
+                    <BsFillPersonVcardFill />
                   </button>
-                  <button onClick={() => openDeleteModal(user.id)}>
+                  <button className="icon" onClick={() => openDeleteModal(user.id)}>
                     <MdDelete />
                   </button>
                 </td>
@@ -166,11 +177,7 @@ const UsersManagement = () => {
           )}
         </tbody>
       </table>
-
-      {/* Pagination */}
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-
-      {/* Confirmation Modal */}
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal">

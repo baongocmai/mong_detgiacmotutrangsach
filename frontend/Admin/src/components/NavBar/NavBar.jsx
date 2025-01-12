@@ -15,21 +15,25 @@ const NavBar = () => {
         users: "/Users",
         settings: "/Settings",
         books: "/Books",
-        reports: "/Reports",
+        reports: "/Report",
         comments: "/Comments",
+        admin: "/AdminManagement",
       };
-
+  
       const searchKey = searchTerm.toLowerCase();
-      if (searchRoutes[searchKey]) {
-        navigate(searchRoutes[searchKey]); // Điều hướng đến trang tương ứng
+      const matchedRoute = Object.keys(searchRoutes).find((key) =>
+        key.includes(searchKey) // Kiểm tra nếu `searchKey` là chuỗi con của bất kỳ `key`
+      );
+  
+      if (matchedRoute) {
+        navigate(searchRoutes[matchedRoute]); // Điều hướng đến trang tương ứng
       } else {
         alert("No matching page found!"); // Nếu không tìm thấy trang
       }
       setSearchTerm(""); // Reset ô Search
     }
   };
-
-
+  
   const [isDarkMode, setIsDarkMode] = useState(false);
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);

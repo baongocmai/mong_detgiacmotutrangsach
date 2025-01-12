@@ -14,21 +14,16 @@ const Categories = () => {
         { id: 7, name: "Kinh dị", quantity: 22, description: "" },
     ]);
 
-    // State cho danh sách thể loại đã lọc
     const [filteredCategories, setFilteredCategories] = useState(categories);
-
-    // Tìm kiếm
     const [search, setSearch] = useState("");
-    
-    const handleSearch = () => {
-        const result = categories.filter((category) =>
-            category.name.toLowerCase().includes(search.toLowerCase())
-        );
-        setFilteredCategories(result); // Cập nhật filteredCategories thay vì categories
-    };
-
-    // Phân trang
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortOrder, setSortOrder] = useState("asc");
+    const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+
+    // Modal state
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
+
     const recordsPerPage = 10;
     const totalPages = Math.ceil(filteredCategories.length / recordsPerPage);
 
@@ -36,26 +31,20 @@ const Categories = () => {
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
     const currentRecords = filteredCategories.slice(indexOfFirstRecord, indexOfLastRecord);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
-    const [sortOrder, setSortOrder] = useState("asc"); 
-    
-    // lọc
-    const handleSort = (order) => {
-        setSortOrder(order);
-        const sortedCatories = [...filteredCategories].sort((a, b) => {
-            if (order === "asc") {
-                return a.quantity - b.quantity; 
-            } else {
-                return b.quantity - a.quantity; 
-            }
-        });
-        setFilteredCategories(sortedCatories);
+    const handleSearch = () => {
+        const result = categories.filter((category) =>
+            category.name.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredCategories(result);
     };
 
-    // State và hàm xử lý cho việc thêm thể loại
-    const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+    const handleSort = (order) => {
+        setSortOrder(order);
+        const sortedCategories = [...filteredCategories].sort((a, b) => {
+            return order === "asc" ? a.quantity - b.quantity : b.quantity - a.quantity;
+        });
+        setFilteredCategories(sortedCategories);
+    };
 
     const handleAddCategory = () => {
         if (!newCategory.name.trim() || !newCategory.description.trim()) {
@@ -64,31 +53,55 @@ const Categories = () => {
         }
 
         const newId = categories.length ? categories[categories.length - 1].id + 1 : 1;
-        setCategories([
-            ...categories,
-            { id: newId, name: newCategory.name.trim(), description: newCategory.description.trim() },
-        ]);
+        const newCategoryItem = {
+            id: newId,
+            name: newCategory.name.trim(),
+            description: newCategory.description.trim(),
+            quantity: 0,
+        };
+
+        setCategories([...categories, newCategoryItem]);
+        setFilteredCategories([...categories, newCategoryItem]);
         setNewCategory({ name: "", description: "" });
+    };
+
+    const openDeleteModal = (categoryId) => {
+        setCategoryToDelete(categoryId);
+        setShowDeleteModal(true);
+    };
+
+    const closeDeleteModal = () => {
+        setShowDeleteModal(false);
+        setCategoryToDelete(null);
+    };
+
+    const handleDelete = () => {
+        const updatedCategories = categories.filter((category) => category.id !== categoryToDelete);
+        setCategories(updatedCategories);
+        setFilteredCategories(updatedCategories);
+        closeDeleteModal();
     };
 
     return (
         <div className="container">
-            {/* Tìm kiếm */}
+            {/* Search Bar */}
             <div className="search-bar">
                 <input
                     type="text"
                     placeholder="Search by name..."
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)} // Only update search term, don't trigger filtering
+                    onChange={(e) => setSearch(e.target.value)}
                 />
-                <button onClick={handleSearch}>Search</button>  {/* Trigger search only when button is clicked */}
+                <button onClick={handleSearch}>Search</button>
             </div>
+
+            {/* Sort Buttons */}
             <div className="sort-container">
                 <button onClick={() => handleSort("asc")}>Low to High</button>
                 <button onClick={() => handleSort("desc")}>High to Low</button>
             </div>
 
-            {/* Form thêm thể loại mới */}
+            {/* Add Category Form */}
             <div className="add-form">
                 <input
                     type="text"
@@ -98,13 +111,14 @@ const Categories = () => {
                 />
                 <input
                     type="text"
-                    placeholder="description"
+                    placeholder="Description"
                     value={newCategory.description}
                     onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
                 />
                 <button onClick={handleAddCategory}>Add</button>
             </div>
 
+            {/* Category Table */}
             <table>
                 <thead>
                     <tr>
@@ -123,7 +137,10 @@ const Categories = () => {
                             <td>{category.description}</td>
                             <td>{category.quantity}</td>
                             <td>
-                                <button>
+                                <button
+                                    className="icon"
+                                    onClick={() => openDeleteModal(category.id)}
+                                >
                                     <MdDelete />
                                 </button>
                             </td>
@@ -132,11 +149,32 @@ const Categories = () => {
                 </tbody>
             </table>
 
+            {/* Pagination Component */}
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={handlePageChange}
+                onPageChange={setCurrentPage}
             />
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h3>Do you want to delete this category?</h3>
+                        <p>
+                            <strong>
+                                {categories.find((cat) => cat.id === categoryToDelete)?.name}
+                            </strong>
+                        </p>
+                        <button onClick={handleDelete} className="confirm-btn">
+                            Yes
+                        </button>
+                        <button onClick={closeDeleteModal} className="cancel-btn">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

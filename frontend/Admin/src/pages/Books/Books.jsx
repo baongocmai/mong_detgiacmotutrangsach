@@ -40,20 +40,20 @@ const Books = () => {
     if (categoryFilter) {
       filtered = filtered.filter(book => book.category === categoryFilter);
     }
-
     // Apply sorting by Created At
     if (createdAtFilter) {
-      filtered = filtered.sort((a, b) => {
+      filtered = [...filtered].sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
-        if (createdAtFilter === "newest-to-oldest") {
+        if (createdAtFilter === "Newest") {
           return dateB - dateA; // Sort descending
-        } else if (createdAtFilter === "oldest-to-newest") {
+        } else if (createdAtFilter === "Oldest") {
           return dateA - dateB; // Sort ascending
         }
         return 0;
       });
     }
+
 
     // Apply search
     if (search) {
@@ -97,7 +97,7 @@ const Books = () => {
   };
 
   return (
-    <div className="books-container">
+    <div className="container">
       {/* Tìm kiếm */}
       <div className="search-bar">
         <input
@@ -136,9 +136,9 @@ const Books = () => {
           value={createdAtFilter}
           onChange={(e) => setCreatedAtFilter(e.target.value)}
         >
-          <option value="">Select Created At</option>
-          <option value="newest-to-oldest">Newest to Oldest</option>
-          <option value="oldest-to-newest">Oldest to Newest</option>
+          <option value="">Sort</option>
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
         </select>
 
         <button onClick={applyFiltersAndSearch}>Apply</button>
@@ -167,9 +167,9 @@ const Books = () => {
                 <td>{book.genre}</td>
                 <td>{book.status}</td>
                 <td>
-                  <button><MdMenuBook /></button>
-                  <button><MdOutlineWarningAmber /></button>
-                  <button onClick={() => openDeleteModal(book.id)}>
+                  <button className="icon"><MdMenuBook /></button>
+                  <button className="icon"><MdOutlineWarningAmber /></button>
+                  <button className="icon" onClick={() => openDeleteModal(book.id)}>
                     <MdDelete />
                   </button>
                 </td>

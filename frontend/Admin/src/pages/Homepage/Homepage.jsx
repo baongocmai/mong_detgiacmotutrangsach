@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
-import anh from "./ảnh.jpg"; // Đường dẫn ảnh
+import qc from "./qc.png"; // Đường dẫn ảnh
 
 const Homepage = () => {
   const [isFading, setIsFading] = useState(false); // Điều khiển hiệu ứng mờ dần
@@ -26,7 +26,7 @@ const Homepage = () => {
 
   return (
     <div className={`homepage ${isFading ? "fade-out" : ""}`}>
-      <img src={anh} alt="Welcome" className="homepage-image" />
+      <img src={qc} alt="Welcome" className="homepage-image" />
     </div>
   );
 };

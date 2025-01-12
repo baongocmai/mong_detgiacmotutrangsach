@@ -13,6 +13,8 @@ import BooksManagement from './pages/Books/BooksManagement';
 import Comments from './pages/Comments/Comments';
 import Report from './pages/Report/Report';
 import Settings from './pages/Settings/Settings';
+import AdminManagement from './pages/AdminManagement/AdminManagement';
+
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +32,7 @@ function App() {
                 <Route path="/Comments" element={<Comments />} />
                 <Route path="/Report" element={<Report />} />
                 <Route path="/Settings" element={<Settings />} />
+                <Route path="/AdminManagement" element={<AdminManagement />} />
             </Route>
         </Routes>
     </BrowserRouter>

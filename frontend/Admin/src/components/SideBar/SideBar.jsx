@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SideBar.css";
 import logo from "../logo.jpg";
 import { FaBars, FaUserFriends, FaBook, FaComments, FaRegFlag, FaClipboard } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { RiAdminFill } from "react-icons/ri";
+
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,13 +54,17 @@ const SideBar = () => {
               <FaComments />
               {isOpen && <span>Comments</span>}
             </li>
-            <li className="menu-item" onClick={() => handleNavigation("/Reports")}>
+            <li className="menu-item" onClick={() => handleNavigation("/Report")}>
               <FaRegFlag />
               {isOpen && <span>Report Handling</span>}
             </li>
             <li className="menu-item" onClick={() => handleNavigation("/Settings")}>
               <IoIosSettings />
               {isOpen && <span>Settings</span>}
+            </li>
+            <li className="menu-item" onClick={() => handleNavigation("/AdminManagement")}>
+              <RiAdminFill />
+              {isOpen && <span>AdminManagement</span>}
             </li>
           </ul>
         </div>
