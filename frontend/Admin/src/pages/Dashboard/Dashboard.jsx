@@ -1,47 +1,37 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Cards from "./Cards.jsx";
+import Pagination from '../../components/Pagination/Pagination';
 
 const Dashboard = () => {
   const [newUsers, setNewUsers] = useState([]);
   const [newStories, setNewStories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const storiesPerPage = 5; // Số lượng stories hiển thị trên mỗi trang
 
-  // Fetch new users who joined in the last 24 hours
-  const fetchNewUsers = async () => {
+  const fetchRecentData = async () => {
     try {
-      const response = await fetch("/api/new-users"); // Adjust the API endpoint as needed
+      const response = await fetch("http://localhost:8000/api/dashboard/recent");
       const data = await response.json();
-      setNewUsers(data);
+      setNewUsers(data.recent_users || []);
+      setNewStories(data.recent_stories || []);
     } catch (error) {
-      console.error("Error fetching new users:", error);
+      console.error("Error fetching recent data:", error);
     }
   };
-
-  // Fetch new stories posted in the last 24 hours
-  const fetchNewStories = async () => {
-    try {
-      const response = await fetch("/http://localhost:8000/new-stories"); // Adjust the API endpoint as needed
-      const data = await response.json();
-      setNewStories(data);
-    } catch (error) {
-      console.error("Error fetching new stories:", error);
-    }
-  };
-
-  // Fetch data on initial load and then periodically (every 24 hours)
   useEffect(() => {
-    fetchNewUsers();
-    fetchNewStories();
-
-    const userInterval = setInterval(fetchNewUsers, 86400000); // Update every 24 hours (86400000ms)
-    const storyInterval = setInterval(fetchNewStories, 86400000); // Update every 24 hours (86400000ms)
-
-    // Cleanup intervals when component unmounts
-    return () => {
-      clearInterval(userInterval);
-      clearInterval(storyInterval);
-    };
+    fetchRecentData(); // Gọi trực tiếp hàm fetchRecentData
   }, []);
+  
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedStories = newStories.slice(
+    (currentPage - 1) * storiesPerPage,
+    currentPage * storiesPerPage
+  );
 
   return (
     <div className="container">
@@ -50,7 +40,9 @@ const Dashboard = () => {
         <div className="left">
           <Cards />
           <div className="statistics">
-            <p style={{ color: "brown", fontSize: "20px", fontWeight: "bold" }}>New Stories in Last 24 Hours</p>
+            <p style={{ color: "brown", fontSize: "20px", fontWeight: "bold" }}>
+              New Stories in Last 24 Hours
+            </p>
             <table>
               <thead>
                 <tr>
@@ -61,7 +53,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {newStories.map((story) => (
+                {paginatedStories.map((story) => (
                   <tr key={story.id}>
                     <td>{story.id}</td>
                     <td>{story.title}</td>
@@ -71,16 +63,23 @@ const Dashboard = () => {
                 ))}
               </tbody>
             </table>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(newStories.length / storiesPerPage)}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
-
         <div className="right">
-          <p style={{ color: "brown", fontSize: "20px", fontWeight: "bold" }}>Update</p>
+          <p style={{ color: "brown", fontSize: "20px", fontWeight: "bold" }}>
+            Update
+          </p>
           <div style={{ background: "pink" }}>
             <ul>
               {newUsers.map((user, index) => (
                 <li key={index}>
-                  {user.username} đã tham gia nền tảng vào {user.joinedAt}
+                  {user.username} đã tham gia vào{" "}
+                  {new Date(user.created_at).toLocaleDateString()}
                 </li>
               ))}
             </ul>

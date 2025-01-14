@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import "./BooksManagement.css";
-import booksIcon from "./books.png";
+import "./StoriesManagement.css";
+import storiesIcon from "./story.png";
 import categoriesIcon from "./categories.png";
 import genresIcon from "./genres.png";
 import bgImage from "./bg.png";
-import Books from "./Books"
+import ListOfStories from "./ListOfStories"
 import Categories from "./Categories"
 import Genres from "./Genres"
 
 
-const BooksManagement = () => {
+const StoriesManagement = () => {
   const [activeButton, setActiveButton] = useState(null);
   const [content, setContent] = useState(
     // Hình ảnh mặc định hiển thị ban đầu
@@ -22,8 +22,8 @@ const BooksManagement = () => {
   };
 
   const handleButtonClick = (type) => {
-    if (type === "books") {
-      setContent(<div className="content-text"><Books /></div>);
+    if (type === "listOfStories") {
+      setContent(<div className="content-text"><ListOfStories /></div>);
     } else if (type === "categories") {
       setContent(<div className="content-text"><Categories /></div>);
     } else if (type === "genres") {
@@ -40,12 +40,12 @@ const BooksManagement = () => {
 
   return (
     <div className="container">
-      <h1>Books Management</h1>
+      <h1>Stories Management</h1>
       <div className="management">
 
         <div className="icons-container">
-          <div className="icon" onClick={() => handleIconClick("books")}>
-            <img src={booksIcon} alt="Books" />
+          <div className="icon" onClick={() => handleIconClick("listOfStories")}>
+            <img src={storiesIcon} alt="ListOfStories" />
           </div>
           <div className="icon" onClick={() => handleIconClick("categories")}>
             <img src={categoriesIcon} alt="Categories" />
@@ -55,9 +55,9 @@ const BooksManagement = () => {
           </div>
         </div>
 
-        {activeButton === "books" && (
-          <button className="books-button" type="submit" onClick={() => handleButtonClick("books")}>
-            Books Content
+        {activeButton === "listOfStories" && (
+          <button className="books-button" type="submit" onClick={() => handleButtonClick("listOfStories")}>
+            List Of Stories
           </button>
         )}
         {activeButton === "categories" && (
@@ -77,4 +77,4 @@ const BooksManagement = () => {
   );
 };
 
-export default BooksManagement;
+export default StoriesManagement;

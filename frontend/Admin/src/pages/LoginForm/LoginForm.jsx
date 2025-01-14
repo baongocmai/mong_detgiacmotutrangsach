@@ -9,19 +9,22 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const response = await fetch('http://localhost:8000/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, password }),
+                body: JSON.stringify({ email, password }),
             });
-
+    
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem('token', data.access_token); // Lưu token vào localStorage
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('role', data.role);
                 alert('Login successful!');
-                window.location.href = '/Dashboard'; // Chuyển hướng sau khi đăng nhập thành công
+    
+                // Điều hướng tới home
+                window.location.href = '/Dashboard'; 
             } else {
                 alert('Invalid email or password! Please try again');
             }
@@ -29,7 +32,7 @@ const LoginForm = () => {
             console.error("Error calling API:", error);
             alert('An error occurred during login. Please try again later!');
         }
-    };
+    };    
 
     return (
         <div className="wrapper">
@@ -64,6 +67,6 @@ const LoginForm = () => {
             </form>
         </div>
     );
-}
+};
 
 export default LoginForm;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UsersManagement.css";
 import Pagination from "../../components/Pagination/Pagination.jsx";
@@ -7,20 +7,9 @@ import { MdDelete } from "react-icons/md";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 
 const UsersManagement = () => {
-  const navigate = useNavigate(); // Khởi tạo useNavigate
-  const [users, setUsers] = useState([
-    { id: 2341, name: "hoàng tử bé", email: "", status: "Active", createdAt: "2023-12-10" },
-    { id: 1442, name: "tôi thấy hoa", email: "", status: "Disabled", createdAt: "2023-12-01" },
-    { id: 149, name: "bánh kem và đèn", email: "", status: "Disabled", createdAt: "2023-12-01" },
-    { id: 2425, name: "có một lời hứa", email: "", status: "Active", createdAt: "2023-12-01" },
-    { id: 4124, name: "giá như", email: "", status: "Active", createdAt: "2023-12-01" },
-    { id: 1420, name: "ai mà biết được", email: "", status: "Disabled", createdAt: "2023-12-01" },
-    { id: 2325, name: "sống tối giản", email: "", status: "Active", createdAt: "2023-12-01" },
-    { id: 4293, name: "một quý cô", email: "", status: "Disabled", createdAt: "2001-02-14" },
-    { id: 5555, name: "cuộc sống mới", email: "", status: "Active", createdAt: "2023-12-01" },
-  ]);
-
-  const [filteredUsers, setFilteredUsers] = useState(users);
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [createdAtFilter, setCreatedAtFilter] = useState("");
@@ -30,12 +19,36 @@ const UsersManagement = () => {
 
   const recordsPerPage = 10;
 
+  // Fetch users from backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/admin/users?skip=${(currentPage - 1) * recordsPerPage}&limit=${recordsPerPage}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+        setFilteredUsers(data); // Apply initial data to filtered list
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [currentPage]);
+
   // Apply search and filter together
   const applyFiltersAndSearch = () => {
     let filtered = users;
 
     if (statusFilter) {
-      filtered = filtered.filter(user => user.status === statusFilter);
+      filtered = filtered.filter((user) => user.status === statusFilter);
     }
     if (createdAtFilter) {
       filtered = [...filtered].sort((a, b) => {
@@ -50,9 +63,11 @@ const UsersManagement = () => {
       });
     }
     if (search) {
-      filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.id.toString().includes(search));
+      filtered = filtered.filter(
+        (user) =>
+          user.name.toLowerCase().includes(search.toLowerCase()) ||
+          user.id.toString().includes(search)
+      );
     }
 
     setFilteredUsers(filtered);
@@ -61,23 +76,59 @@ const UsersManagement = () => {
 
   const totalPages = Math.ceil(filteredUsers.length / recordsPerPage);
 
-  const indexOfLastRecord = currentPage * recordsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = filteredUsers.slice(indexOfFirstRecord, indexOfLastRecord);
+  const toggleStatus = async (userId, currentStatus) => {
+    try {
+      const newStatus = currentStatus === "Active" ? "Disabled" : "Active";
+      const response = await fetch(`http://localhost:8000/api/admin/users/${userId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update user status");
+      }
+      const updatedUser = await response.json();
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      );
+      setFilteredUsers((prevFiltered) =>
+        prevFiltered.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      );
+    } catch (error) {
+      console.error("Error updating user status:", error);
+    }
+  };
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const openDetailsModal = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/admin/users/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user details");
+      }
+
+      const data = await response.json();
+      setUserDetails(data);
+      setShowDetailsModal(true);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
   };
 
-  const toggleStatus = (userId) => {
-    const updatedUsers = users.map((user) =>
-      user.id === userId
-        ? { ...user, status: user.status === "Active" ? "Disabled" : "Active" }
-        : user
-    );
-    setUsers(updatedUsers);
-    setFilteredUsers(updatedUsers);
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setUserDetails(null);
   };
+
 
   const openDeleteModal = (userId) => {
     setUserToDelete(userId);
@@ -89,17 +140,27 @@ const UsersManagement = () => {
     setUserToDelete(null);
   };
 
-  const handleDelete = () => {
-    const updatedUsers = users.filter((user) => user.id !== userToDelete);
-    setUsers(updatedUsers);
-    setFilteredUsers(updatedUsers);
-    closeDeleteModal();
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/admin/users/${userToDelete}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userToDelete));
+      setFilteredUsers((prevFiltered) =>
+        prevFiltered.filter((user) => user.id !== userToDelete)
+      );
+      closeDeleteModal();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
-  // Hàm điều hướng tới trang chi tiết người dùng
-  const handleViewUserDetails = (userId) => {
-    navigate(`/users/${userId}`); // Điều hướng tới URL chi tiết
-  };
 
   return (
     <div className="container">
@@ -144,26 +205,34 @@ const UsersManagement = () => {
           </tr>
         </thead>
         <tbody>
-          {currentRecords.length > 0 ? (
-            currentRecords.map((user) => (
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.status}</td>
                 <td>
-                  <button className="icon"
+                  <button
+                    className="icon"
                     style={{
                       color: user.status === "Active" ? "red" : "green",
                     }}
-                    onClick={() => toggleStatus(user.id)}
+                    onClick={() => toggleStatus(user.id, user.status)}
                   >
                     <IoPeopleSharp />
                   </button>
-                  <button className="icon" onClick={() => handleViewUserDetails(user.id)}> {/* Điều hướng */}
+                  <button
+                    className="icon"
+                    onClick={() => openDetailsModal(user.id)}
+                  >
                     <BsFillPersonVcardFill />
                   </button>
-                  <button className="icon" onClick={() => openDeleteModal(user.id)}>
+
+                  <button
+                    className="icon"
+                    onClick={() => openDeleteModal(user.id)}
+                  >
                     <MdDelete />
                   </button>
                 </td>
@@ -177,13 +246,31 @@ const UsersManagement = () => {
           )}
         </tbody>
       </table>
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      {showDetailsModal && userDetails && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>User Details</h3>
+            <p><strong>ID:</strong> {userDetails.id}</p>
+            <p><strong>Name:</strong> {userDetails.name}</p>
+            <p><strong>Email:</strong> {userDetails.email}</p>
+            <p><strong>Status:</strong> {userDetails.status}</p>
+            <p><strong>Created At:</strong> {new Date(userDetails.createdAt).toLocaleString()}</p>
+            <button onClick={closeDetailsModal} className="cancel-btn">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal">
             <h3>Do you want to delete this user?</h3>
-            <button onClick={handleDelete} className="confirm-btn">Yes</button>
-            <button onClick={closeDeleteModal} className="cancel-btn">Cancel</button>
+            <button onClick={handleDelete} className="confirm-btn">
+              Yes
+            </button>
+            <button onClick={closeDeleteModal} className="cancel-btn">
+              Cancel
+            </button>
           </div>
         </div>
       )}

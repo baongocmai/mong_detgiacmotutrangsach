@@ -46,9 +46,9 @@ const SideBar = () => {
               <FaUserFriends />
               {isOpen && <span>Users Management</span>}
             </li>
-            <li className="menu-item" onClick={() => handleNavigation("/Books")}>
+            <li className="menu-item" onClick={() => handleNavigation("/Stories")}>
               <FaBook />
-              {isOpen && <span>Books Management</span>}
+              {isOpen && <span>Stories Management</span>}
             </li>
             <li className="menu-item" onClick={() => handleNavigation("/Comments")}>
               <FaComments />

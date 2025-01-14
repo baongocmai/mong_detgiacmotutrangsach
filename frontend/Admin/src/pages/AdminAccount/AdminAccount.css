@@ -1,81 +1,124 @@
 .view-profile {
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 10px;
-  }
-  
-  .profile-info {
-    margin-bottom: 20px;
-  }
-  
-  .edit-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .edit-button:hover {
-    background-color: #45a049;
-  }
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Nền bán trong suốt */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .edit-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .edit-form div {
-    margin-bottom: 15px;
-  }
-  
-  .edit-form label {
-    font-weight: bold;
-  }
-  
-  .save-button, .close-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .save-button:hover, .close-button:hover {
-    background-color: #45a049;
-  }
-  
-  .close-button {
-    background-color: #f44336;
-  }
-  
-  .close-button:hover {
-    background-color: #d32f2f;
-  }
-  
+  background-color: transparent;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding-top: 200px;
+  /* Đảm bảo nội dung không bị che bởi thanh tìm kiếm */
+}
+
+
+.profile-container {
+  background-color: rgba(230, 62, 93, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  width: 700px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+.avatar {
+  width: 80px;
+  /* Kích thước của avatar */
+  height: 80px;
+  border-radius: 50%;
+  /* Tạo hình tròn */
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Căn giữa biểu tượng */
+  margin-right: 20px;
+  /* Khoảng cách bên phải avatar */
+}
+
+.avatar-icon {
+  font-size: 60px;
+  /* Kích thước biểu tượng */
+  color: #fff;
+  /* Màu sắc của biểu tượng */
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.profile-details h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.profile-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.profile-actions {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-block;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn:hover {
+  font-weight: bold;
+}
+
+.manage-btn {
+  background-color: rgb(240, 146, 177);
+  padding: 10px 20px;
+  font-size: 16px;
+
+}
+
+.manage-btn:hover {
+  background-color: rgb(239, 94, 118);
+}
+
+.upload-btn {
+  background-color: rgb(138, 222, 237);
+  padding: 8px 15px;
+  font-size: 14px;
+
+}
+
+.upload-btn:hover {
+  background-color: rgb(42, 172, 195);
+}
+
+.reset-button {
+  background-color: rgb(228, 147, 243);
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.reset-button:hover {
+  background-color: rgb(112, 42, 129);
+}
+
+.logout-button {
+  background-color: rgb(255, 102, 102);
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+.logout-button:hover {
+  background-color: rgb(255, 51, 51);
+}

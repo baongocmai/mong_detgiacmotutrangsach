@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./NavBar.css"
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaUserAstronaut } from "react-icons/fa";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { IoIosNotifications, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import ava from "./ava.png"
 const NavBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -14,17 +13,17 @@ const NavBar = () => {
         dashboard: "/Dashboard",
         users: "/Users",
         settings: "/Settings",
-        books: "/Books",
+        stories: "/Stories",
         reports: "/Report",
         comments: "/Comments",
         admin: "/AdminManagement",
       };
-  
+
       const searchKey = searchTerm.toLowerCase();
       const matchedRoute = Object.keys(searchRoutes).find((key) =>
         key.includes(searchKey) // Kiểm tra nếu `searchKey` là chuỗi con của bất kỳ `key`
       );
-  
+
       if (matchedRoute) {
         navigate(searchRoutes[matchedRoute]); // Điều hướng đến trang tương ứng
       } else {
@@ -33,7 +32,7 @@ const NavBar = () => {
       setSearchTerm(""); // Reset ô Search
     }
   };
-  
+
   const [isDarkMode, setIsDarkMode] = useState(false);
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -87,7 +86,7 @@ const NavBar = () => {
             <IoIosNotifications />
           </div>
           <div className="item">
-            <img src={ava} alt="" className="avatar" />
+            <div className="a"><FaUserAstronaut className="a-icon" /> </div>
             {isDropdownOpen ? (
               <IoIosArrowUp className="arrow" onClick={() => setIsDropdownOpen(false)} />
             ) : (

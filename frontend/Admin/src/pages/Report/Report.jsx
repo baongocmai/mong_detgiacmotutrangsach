@@ -42,6 +42,7 @@ const Report = () => {
   const [popupContent, setPopupContent] = useState("");
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [snackbar, setSnackbar] = useState(false);
+  const [selectedReason, setSelectedReason] = useState(null); // Added for storing selected reason
 
   const recordsPerPage = 10;
 
@@ -64,14 +65,20 @@ const Report = () => {
 
   const handleSendNotification = (id) => {
     setSelectedReportId(id);
-    setPopupContent("");
+    setPopupContent(""); // Reset popup content
+    setSelectedReason(null); // Reset selected reason
     setShowPopup(true);
   };
 
   const handleSendNotificationContent = () => {
+    if (!selectedReason) {
+      alert("Please select a reason before sending the notification.");
+      return;
+    }
+
     const updatedReports = reports.map((report) =>
       report.id === selectedReportId
-        ? { ...report, notification: popupContent, status: "Completed" }
+        ? { ...report, notification: selectedReason, status: "Completed" }
         : report
     );
     setReports(updatedReports);
@@ -86,6 +93,15 @@ const Report = () => {
     setPopupContent(report.notification);
     setShowPopup(true);
   };
+
+  // List of reasons
+  const reasons = [
+    "Inappropriate content",
+    "Offensive language",
+    "Age-inappropriate",
+    "Violates platform guidelines",
+    "Other",
+  ];
 
   return (
     <div className="container">
@@ -164,25 +180,24 @@ const Report = () => {
               <p>{popupContent}</p>
             ) : (
               <>
-                <textarea
-                  placeholder="Enter notification content"
-                  value={popupContent}
-                  onChange={(e) => setPopupContent(e.target.value)}
-                  rows="5"
-                  cols="40"
-                />
-                <button onClick={handleSendNotificationContent} style={{
-                  width: "50px",
-                  fontSize: "12px",
-                  backgroundColor: "#28a745",
-                  color: "#fff",
-                  borderRadius: "3px",
-                  cursor: "pointer",
-                }}
-                >Send</button>
+                <p>Select a reason to send notification:</p>
+                <div className="reason-buttons">
+                  {reasons.map((reason, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedReason(reason)} 
+                      className={`reason-button ${selectedReason === reason ? "selected" : ""}`}
+                    >
+                      {reason}
+                    </button>
+                  ))}
+                </div>
+                <button className="confirm-btn" onClick={handleSendNotificationContent}>
+                  Send
+                </button>
               </>
             )}
-            <button onClick={() => setShowPopup(false)}>Close</button>
+            <button className="cancel-btn" onClick={() => setShowPopup(false)}>Close</button>
           </div>
         </div>
       )}
