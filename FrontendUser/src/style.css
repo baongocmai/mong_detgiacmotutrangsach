@@ -1,0 +1,158 @@
+/* Reset some basic styles */
+body, h1, h2, h3, p, ul, li, img, a, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #f6c3ca, #a5a6f6);
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header .logo img {
+    max-height: 60px;
+}
+
+.search-bar {
+    flex-grow: 1;
+    display: flex;
+    margin: 0 20px;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+}
+
+.search-bar button {
+    background-color: #a5a6f6;
+    border: none;
+    padding: 10px 15px;
+    color: white;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.auth-buttons button {
+    background: #a5a6f6;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.auth-buttons button:hover {
+    background: #8a8bed;
+}
+
+/* Navigation Bar */
+.nav-bar ul {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.nav-bar li {
+    margin: 0 15px;
+}
+
+.nav-bar a {
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+}
+
+.nav-bar a:hover {
+    color: #a5a6f6;
+}
+
+/* Banner Slider */
+.banner-slider {
+    display: flex;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.banner-slider img {
+    width: 100%;
+    max-height: 200px;
+    border-radius: 10px;
+    margin: 0 5px;
+}
+
+/* Featured Books Section */
+.featured-books, .new-books {
+    margin-bottom: 40px;
+}
+
+.featured-books h2, .new-books h2 {
+    font-size: 1.8em;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.book-carousel {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+}
+
+.book {
+    flex: 0 0 auto;
+    text-align: center;
+    width: 150px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.book img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.book h3 {
+    font-size: 1em;
+    color: #555;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background: #333;
+    color: white;
+    border-radius: 5px;
+}
