@@ -1,48 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Pagination from "../../components/Pagination/Pagination.jsx";
 import { MdDelete } from "react-icons/md";
 
 const Comments = () => {
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      content: "Hay quá!",
-      userId: 101,
-      chapterId: 1001,
-      storyName: "Truyện A",
-      createdAt: "2023-12-01",
-    },
-    {
-      id: 2,
-      content: "Chương này rất cảm động.",
-      userId: 102,
-      chapterId: 1002,
-      storyName: "Truyện B",
-      createdAt: "2023-12-02",
-    },
-    {
-      id: 3,
-      content: "Kết thúc có hậu quá!",
-      userId: 103,
-      chapterId: 1003,
-      storyName: "Truyện A",
-      createdAt: "2023-12-01",
-    },
-    {
-      id: 4,
-      content: "Đọc xong chương này xúc động quá.",
-      userId: 104,
-      chapterId: 1004,
-      storyName: "Truyện C",
-      createdAt: "2023-12-03",
-    },
-  ]);
-
-  const [filteredComments, setFilteredComments] = useState(comments);
+  const [comments, setComments] = useState([]);
+  const [filteredComments, setFilteredComments] = useState([]);
   const [search, setSearch] = useState(""); // Tìm kiếm theo tên truyện
   const [timeFilter, setTimeFilter] = useState(""); // Lọc theo thời gian
   const [exactDate, setExactDate] = useState(""); // Lọc theo ngày chính xác
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for showing modal
+  const [commentToDelete, setCommentToDelete] = useState(null); // State to track the comment to delete
 
   const recordsPerPage = 10;
 
@@ -50,6 +19,34 @@ const Comments = () => {
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = filteredComments.slice(indexOfFirstRecord, indexOfLastRecord);
+
+  // Fetch all stories and their comments from the API
+  const fetchCommentsForAllStories = async () => {
+    try {
+      const storiesResponse = await axios.get("http://localhost:8000/api/stories"); // Fetch all stories
+      const stories = storiesResponse.data;
+
+      const allComments = [];
+      for (let story of stories) {
+        const chaptersResponse = await axios.get(`http://localhost:8000/api/stories/${story.id}/chapters`);
+        const chapters = chaptersResponse.data;
+
+        for (let chapter of chapters) {
+          const commentsResponse = await axios.get(`http://localhost:8000/api/stories/${story.id}/chapters/${chapter.chapter_id}/comments`);
+          allComments.push(...commentsResponse.data);
+        }
+      }
+
+      setComments(allComments);
+      setFilteredComments(allComments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCommentsForAllStories();
+  }, []); // Fetch when the component mounts
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -114,6 +111,16 @@ const Comments = () => {
     const updatedComments = comments.filter((comment) => comment.id !== id);
     setComments(updatedComments);
     setFilteredComments(updatedComments);
+    setShowDeleteModal(false); // Close the modal after deletion
+  };
+
+  const openDeleteModal = (id) => {
+    setCommentToDelete(id); // Store the comment ID to delete
+    setShowDeleteModal(true); // Show the modal
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false); // Close the modal
   };
 
   const handleExactDateChange = (e) => {
@@ -128,6 +135,7 @@ const Comments = () => {
 
   return (
     <div className="container">
+      <h1>Comments Management</h1>
       <div className="search-bar">
         <input
           type="text"
@@ -183,7 +191,7 @@ const Comments = () => {
                 <td>
                   <button
                     className="icon"
-                    onClick={() => handleDelete(comment.id)}
+                    onClick={() => openDeleteModal(comment.id)} // Open the modal on delete click
                   >
                     <MdDelete />
                   </button>
@@ -203,6 +211,20 @@ const Comments = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Do you want to delete this comment?</h3>
+            <button onClick={() => handleDelete(commentToDelete)} className="confirm-btn">
+              Yes
+            </button>
+            <button onClick={closeDeleteModal} className="cancel-btn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

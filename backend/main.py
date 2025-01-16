@@ -1,68 +1,76 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from jose import jwt
-from passlib.context import CryptContext
-import datetime
-
-# Khởi tạo FastAPI
-app = FastAPI()
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.exception_handler import (
+    http_exception_handler,
+    validation_exception_handler,
+)
+from app.core.logging import setup_logging
+from app.core.settings import get_settings
+from app.routers import (
+    admin_router,
+    auth_router,
+    category_router,
+    chapter_router,
+    comment_router,
+    dashboard_router,
+    favorite_router,
+    reading_progress_router,
+    report_router,
+    review_router,
+    story_router,
+    superadmin_router,
+    user_router,
+)
+
+# Setup logging
+setup_logging()
+
+# Get settings
+settings = get_settings()
+
+# Create FastAPI app
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    docs_url="/docs" if settings.DEBUG else None,
+    redoc_url="/redoc" if settings.DEBUG else None,
+)
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Modify in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mã hóa mật khẩu
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Add exception handlers
+app.add_exception_handler(Exception, http_exception_handler)
+app.add_exception_handler(ValueError, validation_exception_handler)
 
-# Tạo SECRET_KEY và cấu hình JWT
-SECRET_KEY = "mysecretkey123456"  # Đổi thành secret key của bạn
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# Add routers
+app.include_router(auth_router.router, prefix=settings.API_PREFIX)
+app.include_router(user_router.router, prefix=settings.API_PREFIX)
+app.include_router(admin_router.router, prefix=settings.API_PREFIX)
+app.include_router(superadmin_router.router, prefix=settings.API_PREFIX)
+app.include_router(dashboard_router.router, prefix=settings.API_PREFIX)
+app.include_router(story_router.router, prefix=settings.API_PREFIX)
+app.include_router(chapter_router.router, prefix=settings.API_PREFIX)
+app.include_router(category_router.router, prefix=settings.API_PREFIX)
+app.include_router(reading_progress_router.router, prefix=settings.API_PREFIX)
+app.include_router(review_router.router, prefix=settings.API_PREFIX)
+app.include_router(comment_router.router, prefix=settings.API_PREFIX)
+app.include_router(favorite_router.router, prefix=settings.API_PREFIX)
+app.include_router(report_router.router, prefix=settings.API_PREFIX)
 
-# Mock dữ liệu admin
-mock_admin_data = {
-    "email": "hoangminhdiep_t67@hus.edu.vn",
-    "password": pwd_context.hash("123456")  # Mật khẩu đã mã hóa
-}
 
-# Schema cho yêu cầu đăng nhập
-class LoginRequest(BaseModel):
-    email: str
-    password: str
-
-# Hàm kiểm tra mật khẩu
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-# Hàm tạo access token
-def create_access_token(data: dict, expires_delta: datetime.timedelta = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-# API xử lý đăng nhập
-@app.post("/login")
-async def login(login_request: LoginRequest):
-    # Kiểm tra thông tin đăng nhập từ mock dữ liệu
-    if login_request.email != mock_admin_data["email"] or not verify_password(
-        login_request.password, mock_admin_data["password"]
-    ):
-        raise HTTPException(status_code=401, detail="Email hoặc mật khẩu không đúng!")
-
-    # Tạo access token
-    access_token_expires = datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": mock_admin_data["email"]}, expires_delta=access_token_expires
-    )
-
-    return {"access_token": access_token, "token_type": "bearer"}
+# Root endpoint
+@app.get("/")
+async def root():
+    return {
+        "message": "Welcome to Story API",
+        "version": settings.VERSION,
+        "docs": "/docs",
+    }

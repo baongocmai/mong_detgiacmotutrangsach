@@ -1,208 +1,182 @@
-import React, { useState } from "react";
-import Pagination from "../../components/Pagination/Pagination.jsx";
-import { MdHistory } from "react-icons/md"; // History icon for viewing notifications
-import { IoNotificationsCircleSharp } from "react-icons/io5"; // Icon for sending notifications
-import "./Report.css"; // CSS file for styling
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { LuHistory } from "react-icons/lu";
+import { MdOutlineCircleNotifications, MdDelete } from "react-icons/md";
 
 const Report = () => {
-  const [reports, setReports] = useState([
-    {
-      id: 1,
-      content: "Nội dung xuyên tạc",
-      userId: 101,
-      storyName: "Hôm nay vui quá!",
-      createdAt: "2023-12-11",
-      status: "In Progress",
-      notification: "",
-    },
-    {
-      id: 2,
-      content: "Độ tuổi không phù hợp.",
-      userId: 102,
-      storyName: "Truyện B",
-      createdAt: "2023-12-02",
-      status: "In Progress",
-      notification: "",
-    },
-    {
-      id: 3,
-      content: "Kết thúc có hậu ghê!",
-      userId: 103,
-      storyName: "Truyện A",
-      createdAt: "2023-12-01",
-      status: "Completed",
-      notification: "Your report has been processed and resolved.",
-    },
+  const [reports, setReports] = useState([]);
+  const [searchId, setSearchId] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+  const [filteredReports, setFilteredReports] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupType, setPopupType] = useState(""); // 
+  const [selectedReportId, setSelectedReportId] = useState(null);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [sentContent, setSentContent] = useState(""); // Nội dung thông báo đã gửi
+  const [reasons] = useState([
+    "Inappropriate content",
+    "Plagiarism",
+    "Offensive language",
+    "Spam",
   ]);
 
-  const [filteredReports, setFilteredReports] = useState(reports);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupContent, setPopupContent] = useState("");
-  const [selectedReportId, setSelectedReportId] = useState(null);
-  const [snackbar, setSnackbar] = useState(false);
-  const [selectedReason, setSelectedReason] = useState(null); // Added for storing selected reason
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
-  const recordsPerPage = 10;
-
-  const totalPages = Math.ceil(filteredReports.length / recordsPerPage);
-  const indexOfLastRecord = currentPage * recordsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = filteredReports.slice(indexOfFirstRecord, indexOfLastRecord);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/reports");
+      setReports(response.data.items);
+      setFilteredReports(response.data.items);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    }
   };
 
   const handleSearch = () => {
-    const filtered = reports.filter((report) =>
-      report.storyName.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredReports(filtered);
-    setCurrentPage(1);
-  };
+    let result = reports;
 
-  const handleSendNotification = (id) => {
-    setSelectedReportId(id);
-    setPopupContent(""); // Reset popup content
-    setSelectedReason(null); // Reset selected reason
-    setShowPopup(true);
-  };
-
-  const handleSendNotificationContent = () => {
-    if (!selectedReason) {
-      alert("Please select a reason before sending the notification.");
-      return;
+    if (searchId) {
+      result = result.filter((report) => report.report_id.toString() === searchId);
     }
 
-    const updatedReports = reports.map((report) =>
-      report.id === selectedReportId
-        ? { ...report, notification: selectedReason, status: "Completed" }
-        : report
-    );
-    setReports(updatedReports);
-    setFilteredReports(updatedReports);
-    setShowPopup(false);
-    setSnackbar(true);
-    setTimeout(() => setSnackbar(false), 3000);
+    if (sortOrder === "Newest") {
+      result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    } else if (sortOrder === "Oldest") {
+      result.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    }
+
+    setFilteredReports(result);
   };
 
-  const handleShowNotificationHistory = (id) => {
-    const report = reports.find((report) => report.id === id);
-    setPopupContent(report.notification);
+  const handleSendNotification = (reportId) => {
+    setSelectedReportId(reportId);
+    setPopupType("notification");
     setShowPopup(true);
   };
 
-  // List of reasons
-  const reasons = [
-    "Inappropriate content",
-    "Offensive language",
-    "Age-inappropriate",
-    "Violates platform guidelines",
-    "Other",
-  ];
+  const handleViewSentContent = (reportId) => {
+    const report = reports.find((r) => r.report_id === reportId);
+    setSentContent(report.email_content || "No content available.");
+    setPopupType("view");
+    setShowPopup(true);
+  };
+
+  const handleDeleteReport = async (reportId) => {
+    if (window.confirm("Are you sure you want to delete this report?")) {
+      try {
+        await axios.delete(`http://localhost:8000/api/reports/${reportId}`);
+        alert("Report deleted successfully!");
+        fetchReports();
+      } catch (error) {
+        console.error("Error deleting report:", error);
+      }
+    }
+  };
+
+  const handleReasonSelect = (reason) => {
+    setSelectedReason(reason);
+  };
+
+  const handleSendNotificationContent = async () => {
+    try {
+      await axios.patch(`http://localhost:8000/api/reports/${selectedReportId}`, {
+        status: "COMPLETED", // Cập nhật trạng thái báo cáo là đã xử lý
+        email_content: selectedReason, // Lý do gửi email
+      });
+      alert("Notification sent to author!");
+      setShowPopup(false); // Đóng popup sau khi gửi
+      fetchReports(); // Cập nhật lại danh sách
+    } catch (error) {
+      console.error("Error sending notification:", error);
+    }
+  };
 
   return (
     <div className="container">
-      <h1>Report Handling</h1>
+      <h1>Reports Management</h1>
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Search by story name"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by Report ID"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
         />
-        <button onClick={handleSearch}>Search</button>
+        <div className="filter-container">
+          <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+            <option value="">Sort</option>
+            <option value="Newest">Newest</option>
+            <option value="Oldest">Oldest</option>
+          </select>
+          <button onClick={handleSearch}>Search</button>
+        </div>
       </div>
 
-      <table className="report-table">
+      <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Content</th>
-            <th>User ID</th>
-            <th>Story Name</th>
+            <th>Report ID</th>
+            <th>Reason</th>
+            <th>Reporter</th>
+            <th>Chapter</th>
+            <th>Story</th>
             <th>Created At</th>
             <th>Status</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentRecords.length > 0 ? (
-            currentRecords.map((report) => (
-              <tr key={report.id}>
-                <td>{report.id}</td>
-                <td>{report.content}</td>
-                <td>{report.userId}</td>
-                <td>{report.storyName}</td>
-                <td>{report.createdAt}</td>
-                <td>{report.status}</td>
-                <td>
-                  {report.status === "In Progress" && (
-                    <button
-                      className="icon"
-                      onClick={() => handleSendNotification(report.id)}
-                    >
-                      <IoNotificationsCircleSharp />
-                    </button>
-                  )}
-                  {report.status === "Completed" && (
-                    <button
-                      className="icon"
-                      onClick={() => handleShowNotificationHistory(report.id)}
-                    >
-                      <MdHistory />
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="7">No results found</td>
+          {filteredReports.map((report) => (
+            <tr key={report.report_id}>
+              <td>{report.report_id}</td>
+              <td>{report.reason}</td>
+              <td>{report.reporter.name}</td>
+              <td>{report.story.chapter}</td>
+              <td>{report.story.title}</td>
+              <td>{new Date(report.created_at).toLocaleString()}</td>
+              <td>{report.status}</td>
+              <td>
+                {report.status === "in_progress" ? (
+                  <button onClick={() => handleSendNotification(report.report_id)}>
+                    <MdOutlineCircleNotifications />
+                  </button>
+                ) : (
+                  <button onClick={() => handleViewSentContent(report.report_id)}>
+                    <LuHistory />
+                  </button>
+                )}
+                <button onClick={() => handleDeleteReport(report.report_id)}><MdDelete /></button>
+              </td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-
-      {showPopup && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>{popupContent ? "Notification History" : "Send Notification"}</h3>
-            {popupContent ? (
-              <p>{popupContent}</p>
-            ) : (
-              <>
-                <p>Select a reason to send notification:</p>
-                <div className="reason-buttons">
-                  {reasons.map((reason, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedReason(reason)} 
-                      className={`reason-button ${selectedReason === reason ? "selected" : ""}`}
-                    >
-                      {reason}
-                    </button>
-                  ))}
-                </div>
-                <button className="confirm-btn" onClick={handleSendNotificationContent}>
-                  Send
-                </button>
-              </>
-            )}
-            <button className="cancel-btn" onClick={() => setShowPopup(false)}>Close</button>
-          </div>
+      {showPopup && popupType === "notification" && (
+        <div className="modal">
+          <h3>Select a reason to notify the author</h3>
+          {reasons.map((reason, index) => (
+            <button
+              key={index}
+              onClick={() => handleReasonSelect(reason)}
+              className={selectedReason === reason ? "selected" : ""}
+            >
+              {reason}
+            </button>
+          ))}
+          <button onClick={handleSendNotificationContent}>Send</button>
+          <button onClick={() => setShowPopup(false)}>Cancel</button>
         </div>
       )}
 
-      {snackbar && <div className="snackbar">Notification sent successfully!</div>}
+      {showPopup && popupType === "view" && (
+        <div className="modal">
+          <h3>Sent Notification Content</h3>
+          <p>{sentContent}</p>
+          <button onClick={() => setShowPopup(false)}>Close</button>
+        </div>
+      )}
     </div>
   );
 };

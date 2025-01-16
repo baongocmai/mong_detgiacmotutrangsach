@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./NavBar.css"
+import "./NavBar.css";
 import { FaSearch, FaUserAstronaut } from "react-icons/fa";
-import { MdDarkMode, MdLightMode } from "react-icons/md";
+import light from "./light.png"; // Light mode image
+import dark from "./dark.png"; // Dark mode image
 import { IoIosNotifications, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { RiNavigationFill } from "react-icons/ri";
+import nav_bg from "./nav_bg.png";
+
 const NavBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
@@ -21,15 +26,15 @@ const NavBar = () => {
 
       const searchKey = searchTerm.toLowerCase();
       const matchedRoute = Object.keys(searchRoutes).find((key) =>
-        key.includes(searchKey) // Kiểm tra nếu `searchKey` là chuỗi con của bất kỳ `key`
+        key.includes(searchKey)
       );
 
       if (matchedRoute) {
-        navigate(searchRoutes[matchedRoute]); // Điều hướng đến trang tương ứng
+        navigate(searchRoutes[matchedRoute]);
       } else {
-        alert("No matching page found!"); // Nếu không tìm thấy trang
+        alert("No matching page found!");
       }
-      setSearchTerm(""); // Reset ô Search
+      setSearchTerm("");
     }
   };
 
@@ -43,59 +48,81 @@ const NavBar = () => {
     }
   };
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Trạng thái để mở/đóng menu lựa chọn
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const handleMenuAction = (action) => {
     if (action === "viewProfile") {
       navigate("/AdminAccount");
     } else if (action === "logout") {
-      navigate("/LoginForm");
+      navigate("/login");
     }
-    setIsDropdownOpen(false); // Rút gọn dropdown
-  };
-
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    navigate("/LoginForm"); // Điều hướng đến trang LoginForm
-  };
-  const handleViewProfile = () => {
-    navigate("/AdminAccount"); // Điều hướng đến trang AdminAccount
+    setIsDropdownOpen(false);
   };
 
   return (
     <div className="navbar">
       <div className="wrapper-i">
+        <button className="logo-btn" onClick={() => navigate("/")}
+          style={{
+            backgroundImage: `url(${nav_bg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}>
+          <RiNavigationFill /> redirect
+        </button>
+
         <div className="search">
           <input
             type="text"
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleSearch} // Gọi hàm khi nhấn Enter
+            onKeyDown={handleSearch}
           />
           <FaSearch />
         </div>
+
         <div className="items">
           <div className="item">
-            {isDarkMode ? (
-              <MdLightMode onClick={toggleDarkMode} />
-            ) : (
-              <MdDarkMode onClick={toggleDarkMode} />
-            )}
+            <div
+              className="switch"
+              style={{
+                backgroundImage: isDarkMode ? `url(${dark})` : `url(${light})`,
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={isDarkMode}
+                onChange={toggleDarkMode}
+                id="darkModeSwitch"
+              />
+              <label htmlFor="darkModeSwitch"></label>
+            </div>
           </div>
           <div className="item">
             <IoIosNotifications />
           </div>
           <div className="item">
-            <div className="a"><FaUserAstronaut className="a-icon" /> </div>
+            <div className="a">
+              <FaUserAstronaut className="a-icon" />
+            </div>
             {isDropdownOpen ? (
-              <IoIosArrowUp className="arrow" onClick={() => setIsDropdownOpen(false)} />
+              <IoIosArrowUp
+                className="arrow"
+                onClick={() => setIsDropdownOpen(false)}
+              />
             ) : (
-              <IoIosArrowDown className="arrow" onClick={() => setIsDropdownOpen(true)} />
+              <IoIosArrowDown
+                className="arrow"
+                onClick={() => setIsDropdownOpen(true)}
+              />
             )}
             {isDropdownOpen && (
               <div className="dropdown-menu">
                 <ul>
-                  <li onClick={() => handleMenuAction("viewProfile")}>View Profile</li>
+                  <li onClick={() => handleMenuAction("viewProfile")}>
+                    View Profile
+                  </li>
                   <li onClick={() => handleMenuAction("logout")}>Logout</li>
                 </ul>
               </div>
@@ -106,4 +133,5 @@ const NavBar = () => {
     </div>
   );
 };
-export default NavBar
+
+export default NavBar;

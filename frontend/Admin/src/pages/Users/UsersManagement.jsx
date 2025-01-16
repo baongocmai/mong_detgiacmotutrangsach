@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./UsersManagement.css";
 import Pagination from "../../components/Pagination/Pagination.jsx";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { BsFillPersonVcardFill } from "react-icons/bs";
+import Slider from "react-slick";
 
 const UsersManagement = () => {
   const navigate = useNavigate();
@@ -16,25 +18,25 @@ const UsersManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [stories, setStories] = useState([]); // State for user stories
 
   const recordsPerPage = 10;
 
-  // Fetch users from backend
+  // Fetch users from backend using Axios
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/admin/users?skip=${(currentPage - 1) * recordsPerPage}&limit=${recordsPerPage}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data); // Apply initial data to filtered list
+        const response = await axios.get(
+          `http://localhost:8000/api/admin/users`,
+          {
+            params: {
+              skip: (currentPage - 1) * recordsPerPage,
+              limit: recordsPerPage,
+            },
+          }
+        );
+        setUsers(response.data);
+        setFilteredUsers(response.data); // Apply initial data to filtered list
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -43,13 +45,14 @@ const UsersManagement = () => {
     fetchUsers();
   }, [currentPage]);
 
-  // Apply search and filter together
-  const applyFiltersAndSearch = () => {
+  // Apply search, status, and sort filter when clicking search button
+  const handleSearch = () => {
     let filtered = users;
 
     if (statusFilter) {
       filtered = filtered.filter((user) => user.status === statusFilter);
     }
+
     if (createdAtFilter) {
       filtered = [...filtered].sort((a, b) => {
         const dateA = new Date(a.createdAt);
@@ -62,6 +65,7 @@ const UsersManagement = () => {
         return 0;
       });
     }
+
     if (search) {
       filtered = filtered.filter(
         (user) =>
@@ -79,17 +83,11 @@ const UsersManagement = () => {
   const toggleStatus = async (userId, currentStatus) => {
     try {
       const newStatus = currentStatus === "Active" ? "Disabled" : "Active";
-      const response = await fetch(`http://localhost:8000/api/admin/users/${userId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update user status");
-      }
-      const updatedUser = await response.json();
+      const response = await axios.patch(
+        `http://localhost:8000/api/admin/users/${userId}/status`,
+        { status: newStatus }
+      );
+      const updatedUser = response.data;
       setUsers((prevUsers) =>
         prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
       );
@@ -100,35 +98,31 @@ const UsersManagement = () => {
       console.error("Error updating user status:", error);
     }
   };
+
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const openDetailsModal = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/users/${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await axios.get(`http://localhost:8000/api/admin/users/${userId}`);
+      setUserDetails(response.data);
+
+      const storiesResponse = await axios.get(`http://localhost:8000/api/users/${userId}/stories`, {
+        params: { skip: 0, limit: 10 },
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user details");
-      }
-
-      const data = await response.json();
-      setUserDetails(data);
+      setStories(storiesResponse.data.items);
+      
       setShowDetailsModal(true);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
   };
 
-
   const closeDetailsModal = () => {
     setShowDetailsModal(false);
     setUserDetails(null);
-  };
+    setStories([]); 
 
+  };
 
   const openDeleteModal = (userId) => {
     setUserToDelete(userId);
@@ -142,15 +136,7 @@ const UsersManagement = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/users/${userToDelete}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
+      await axios.delete(`http://localhost:8000/api/admin/users/${userToDelete}`);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userToDelete));
       setFilteredUsers((prevFiltered) =>
         prevFiltered.filter((user) => user.id !== userToDelete)
@@ -160,7 +146,90 @@ const UsersManagement = () => {
       console.error("Error deleting user:", error);
     }
   };
-
+  const CustomPrevArrow = ({ onClick }) => (
+    <button
+      className="slick-prev"
+      onClick={onClick}
+      style={{
+        display: "flex",
+        position: "absolute",
+        top: "50%",
+        left: "-20px",
+        transform: "translateY(-50%)",
+        backgroundColor: "rgba(107, 105, 105, 0.5)",
+        color: "white",
+        border: "none",
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+        fontSize: "20px",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
+        zIndex: 1000,
+        transition: "background-color 0.3s ease",
+      }}
+    />
+  );
+  
+  const CustomNextArrow = ({ onClick }) => (
+    <button
+      className="slick-next"
+      onClick={onClick}
+      style={{
+        display: "flex",
+        position: "absolute",
+        top: "50%",
+        right: "-20px",
+        transform: "translateY(-50%)",
+        backgroundColor: "rgba(107, 105, 105, 0.5)",
+        color: "white",
+        border: "none",
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+        fontSize: "20px",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
+        zIndex: 1000,
+        transition: "background-color 0.3s ease",
+      }}
+    />
+  );  
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: true,
+    prevArrow: <CustomPrevArrow />,
+    nextArrow: <CustomNextArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
     <div className="container">
@@ -172,7 +241,7 @@ const UsersManagement = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={applyFiltersAndSearch}>Search</button>
+        <button onClick={handleSearch}>Search</button>
       </div>
 
       <div className="filter-container">
@@ -190,8 +259,6 @@ const UsersManagement = () => {
           <option value="Newest">Newest</option>
           <option value="Oldest">Oldest</option>
         </select>
-
-        <button onClick={applyFiltersAndSearch}>Apply</button>
       </div>
       <table>
         <thead>
@@ -236,7 +303,7 @@ const UsersManagement = () => {
                     <MdDelete />
                   </button>
                 </td>
-                <td>{user.createdAt}</td>
+                <td>{new Date(user.createdAt).toLocaleString()}</td>
               </tr>
             ))
           ) : (
@@ -246,21 +313,41 @@ const UsersManagement = () => {
           )}
         </tbody>
       </table>
+
       {showDetailsModal && userDetails && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>User Details</h3>
             <p><strong>ID:</strong> {userDetails.id}</p>
             <p><strong>Name:</strong> {userDetails.name}</p>
             <p><strong>Email:</strong> {userDetails.email}</p>
             <p><strong>Status:</strong> {userDetails.status}</p>
             <p><strong>Created At:</strong> {new Date(userDetails.createdAt).toLocaleString()}</p>
+            <Slider {...settings}>
+              {stories.length > 0 ? (
+                stories.map((story) => (
+                  <div key={story.id} className="story-card">
+                    <img
+                      src={story.image || "/placeholder.jpg"}
+                      alt={story.title}
+                      className="story-image"
+                    />
+                    <h5>{story.title}</h5>
+                    <p>{story.genre}</p>
+                    <p>{story.status}</p>
+                  </div>
+                ))
+              ) : (
+                <div>No stories available.</div>
+              )}
+            </Slider>
+
             <button onClick={closeDetailsModal} className="cancel-btn">
               Close
             </button>
           </div>
         </div>
       )}
+
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal">

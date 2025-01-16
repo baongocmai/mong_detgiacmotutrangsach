@@ -1,34 +1,41 @@
 /* Tổng thể Layout */
 .layout {
   justify-content: center;
-  align-items: flex-start; /* Điều chỉnh từ center sang flex-start */
+  align-items: flex-start;
   display: flex;
-  flex-direction: row; /* Sắp xếp Sidebar và Content cạnh nhau */
-  height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+  flex-direction: row;
+  height: 100vh;
 }
 
 /* Main Content */
 .main-content {
-  display: grid;
-  margin-left: 45px;
   margin-top: 80px;
-  min-height: calc(100vh - 80px); /* Đảm bảo bao phủ toàn bộ màn hình trừ khoảng header */
-  width: calc(100vw - 140px);
-  padding: 20px; 
+  min-height: calc(100vh - 100px);
+  width: calc(100vw - 140px); /* Chiều rộng ban đầu của nội dung */
+  padding: 20px;
   border: none;
-  background-color: rgba(250, 236, 236, 0.5); /* Độ trong suốt 50% */
-  border-radius: 40px;
-  transition: margin-left 0.3s ease-in-out; /* Thêm hiệu ứng chuyển động */
-  height: auto; /* Cho phép điều chỉnh chiều cao */
-  box-sizing: border-box; /* Bao gồm padding và border vào chiều rộng/chiều cao */
+  background-color: rgba(250, 236, 236, 0.5);
+  box-shadow: 0 0 100px pink;
+  border-radius: 20px;
+  overflow: auto;
+  transition: margin-left 0.3s ease-in-out; /* Điều chỉnh margin-left thay vì position */
+  box-sizing: border-box;
 }
 
-/* Sidebar mở rộng */
-.sidebar-open .main-content {
-  margin-left: 650px;
+.main-content:hover{
+  animation:  animate 8s linear infinite;
 }
 
-/* Sidebar thu nhỏ */
+@keyframes animate {
+  100%{
+      filter: hue-rotate(360deg)
+  }
+}
+.main-content h1{
+  font-size: 30px;
+  color:purple;
+}
+
 .sidebar-closed .main-content {
-  margin-left: 60px;
+  margin-left: 60px; 
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import SideBar from "../SideBar/SideBar";  
-import NavBar from "../NavBar/NavBar";   
+import SideBar from "../SideBar/SideBar";
+import NavBar from "../NavBar/NavBar";
 import { Outlet } from "react-router-dom";  // Dùng để render nội dung của các trang con
 import "./Layout.css"
 const Layout = () => {
@@ -12,7 +12,7 @@ const Layout = () => {
 
   return (
     <div className={`layout ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
-      <SideBar toggleSidebar={toggleSidebar} />
+      <SideBar className="navigation" toggleSidebar={toggleSidebar} />
       <div className="content">
         <NavBar />
         <div className="main-content">

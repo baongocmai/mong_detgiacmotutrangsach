@@ -5,6 +5,7 @@ body.dark-mode {
 .navbar {
     position: fixed;
     height: 60px;
+    width: 100vw;
     border-bottom: 0.5px solid rgb(195, 148, 156);
     font-size: 14px;
     display: flex;
@@ -18,6 +19,19 @@ body.dark-mode {
     padding: 20px;
     align-items: center;
     justify-content: space-between;
+}
+.logo-btn {
+  margin-left: 150px;
+  border: none;
+  background: purple;
+  border-radius: 20px;
+  padding: 10px ;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color:white;
+  font-style: italic;
+  font-weight: bold;
 }
 .search {
   position: relative;
@@ -45,7 +59,6 @@ body.dark-mode {
   color: #888;
   cursor: pointer;
 }
-
 .items{
     display: flex;
     align-items: center;
@@ -104,3 +117,68 @@ body.dark-mode {
     font-weight: bold;
     color:white;
   }
+  .mode-toggle {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 20%;
+    transition: background-color 0.3s ease;
+  }
+  
+  .mode-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling for the image inside the button */
+  .mode-icon {
+    width: 25px; /* Adjust the size of the icon */
+    height: 25px;
+  }
+
+  .switch {
+    border-radius: 40px;
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+    background-size:cover;
+    background-position: center;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .switch label {
+    position: absolute;
+    cursor: pointer;
+    font-size: 8px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    transition: 0.4s;
+    border-radius: 50px;
+  }
+  .switch label:before {
+    content: "";
+    position: absolute;
+    height: 17px;
+    width: 17px;
+    border-radius: 50%;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+  }
+  
+  .switch input:checked + label:before {
+    transform: translateX(25px);
+  }
+  
+
+  

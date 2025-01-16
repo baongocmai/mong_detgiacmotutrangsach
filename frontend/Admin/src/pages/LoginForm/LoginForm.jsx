@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
 import { FaUser, FaLock } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";  // Use useNavigate instead of useHistory
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate(); // Initialize useNavigate hook
+    const handleNavigation = (path) => {
+        navigate(path); // Điều hướng đến trang tương ứng
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         try {
-            const response = await fetch('http://localhost:8000/login', {
+            const response = await fetch('http://mong_detgiacmotutrangsach-backend-1:8000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -20,11 +24,11 @@ const LoginForm = () => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('token', data.access_token);
-                localStorage.setItem('role', data.role);
-                alert('Login successful!');
-    
-                // Điều hướng tới home
-                window.location.href = '/Dashboard'; 
+                localStorage.setItem('role', data.role); // Lưu vai trò người dùng
+                console.log('Login successful, redirecting to Dashboard...');
+                
+                // Đảm bảo điều hướng đúng
+                navigate('/Dashboard'); // Chuyển hướng về trang Dashboard
             } else {
                 alert('Invalid email or password! Please try again');
             }
@@ -32,7 +36,9 @@ const LoginForm = () => {
             console.error("Error calling API:", error);
             alert('An error occurred during login. Please try again later!');
         }
-    };    
+    };
+    
+    
 
     return (
         <div className="wrapper">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "../../components/Pagination/Pagination.jsx";
 import "./ListOfStories.css";
-import { MdDelete, MdOutlineWarningAmber, MdMenuBook } from "react-icons/md";
+import { MdDelete, MdReport, MdMenuBook } from "react-icons/md";
 import axios from "axios";
 
 const ListOfStories = () => {
@@ -9,41 +9,84 @@ const ListOfStories = () => {
   const [filteredStories, setFilteredStories] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [categories, setCategories] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState("");
-  const [createdAtFilter, setCreatedAtFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedStory, setSelectedStory] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedStoryReports, setSelectedStoryReports] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [storyToDelete, setStoryToDelete] = useState(null);
 
+
   const recordsPerPage = 10;
 
-  // Fetch stories from the backend
   const fetchStories = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/stories", {
         params: {
           skip: (currentPage - 1) * recordsPerPage,
           limit: recordsPerPage,
-          keyword: search,
           status: statusFilter,
-          category_ids: categoryFilter,
-          sort_by: "created_at", 
-          sort_order: "desc",
         },
       });
       setStories(response.data.items);
-      setFilteredStories(response.data.items);
     } catch (error) {
       console.error("Error fetching stories:", error);
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+  const fetchReports = async (storyId) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/reports/stories/${storyId}`);
+      setSelectedStoryReports(response.data);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    }
+  };
+
+  const applyFilters = () => {
+    let filtered = stories;
+
+    if (search) {
+      filtered = filtered.filter((story) =>
+        story.title.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    if (statusFilter) {
+      filtered = filtered.filter((story) => story.status === statusFilter);
+    }
+
+    if (categoryFilter) {
+      filtered = filtered.filter((story) => story.category === categoryFilter);
+    }
+
+    setFilteredStories(filtered);
+  };
+
   useEffect(() => {
     fetchStories();
-  }, [currentPage, search, statusFilter, categoryFilter]);
+  }, [currentPage, statusFilter]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [search, statusFilter, categoryFilter, stories]);
 
   const totalPages = Math.ceil(filteredStories.length / recordsPerPage);
-
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = filteredStories.slice(indexOfFirstRecord, indexOfLastRecord);
@@ -73,6 +116,28 @@ const ListOfStories = () => {
     }
   };
 
+  const openDetailModal = (story) => {
+    setSelectedStory(story);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedStory(null);
+  };
+
+  const openReportModal = (story) => {
+    setSelectedStory(story);
+    fetchReports(story.id);  // Lấy các báo cáo của câu chuyện
+    setShowReportModal(true);
+  };
+
+  const closeReportModal = () => {
+    setShowReportModal(false);
+    setSelectedStoryReports([]);
+    setSelectedStory(null);
+  };
+
   return (
     <div className="container">
       <div className="search-bar">
@@ -82,7 +147,6 @@ const ListOfStories = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={fetchStories}>Search</button>
       </div>
 
       <div className="filter-container">
@@ -91,9 +155,9 @@ const ListOfStories = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
         >
           <option value="">Select Status</option>
-          <option value="Full">Full</option>
-          <option value="Ongoing">Ongoing</option>
-          <option value="Dropped">Dropped</option>
+          <option value="ONGOING">ONGOING</option>
+          <option value="COMPLETED">COMPLETED</option>
+          <option value="DROPPED">DROPPED</option>
         </select>
 
         <select
@@ -101,13 +165,13 @@ const ListOfStories = () => {
           onChange={(e) => setCategoryFilter(e.target.value)}
         >
           <option value="">Select Category</option>
-          <option value="tiểu thuyết">Tiểu thuyết</option>
-          <option value="truyện ngắn">Truyện ngắn</option>
-          <option value="Self-Help">Self-Help</option>
-          <option value="sức khỏe">Sức khỏe</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
         </select>
-
-        <button onClick={fetchStories}>Apply Filters</button>
+        <button onClick={applyFilters}>Search</button>
       </div>
 
       <table>
@@ -132,13 +196,17 @@ const ListOfStories = () => {
                 <td>{story.genre}</td>
                 <td>{story.status}</td>
                 <td>
-                  <button className="icon"><MdMenuBook /></button>
-                  <button className="icon"><MdOutlineWarningAmber /></button>
-                  <button className="icon" onClick={() => openDeleteModal(story.id)}>
+                  <button onClick={() => openDetailModal(story)}>
+                    <MdMenuBook />
+                  </button>
+                  <button onClick={() => openDeleteModal(story.id)}>
                     <MdDelete />
                   </button>
+                  <button onClick={() => openReportModal(story)}>
+                    <MdReport />
+                  </button>
                 </td>
-                <td>{story.createdAt}</td>
+                <td>{new Date(story.createdAt).toLocaleString()}</td>
               </tr>
             ))
           ) : (
@@ -149,18 +217,45 @@ const ListOfStories = () => {
         </tbody>
       </table>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal">
             <h3>Do you want to delete this story?</h3>
             <button onClick={handleDelete} className="confirm-btn">Yes</button>
             <button onClick={closeDeleteModal} className="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {showDetailModal && selectedStory && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Story Details</h3>
+            <p><strong>Title:</strong> {selectedStory.title}</p>
+            <p><strong>Category:</strong> {selectedStory.category}</p>
+            <p><strong>Genre:</strong> {selectedStory.genre}</p>
+            <p><strong>Status:</strong> {selectedStory.status}</p>
+            <p><strong>Created At:</strong> {new Date(selectedStory.createdAt).toLocaleString()}</p>
+            <button onClick={closeDetailModal} className="cancel-btn">Close</button>
+          </div>
+        </div>
+      )}
+
+      {showReportModal && selectedStoryReports.length > 0 && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Reports for Story "{selectedStory.title}"</h3>
+            <ul>
+              {selectedStoryReports.map((report) => (
+                <li key={report.report_id}>
+                  <p><strong>Reason:</strong> {report.reason}</p>
+                  <p><strong>Status:</strong> {report.status}</p>
+                  <p><strong>Admin Note:</strong> {report.admin_note || "None"}</p>
+                  <hr />
+                </li>
+              ))}
+            </ul>
+            <button onClick={closeReportModal} className="cancel-btn">Close</button>
           </div>
         </div>
       )}

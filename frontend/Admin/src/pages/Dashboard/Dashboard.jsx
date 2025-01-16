@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   const fetchRecentData = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/dashboard/recent");
+      const response = await fetch("http://mong_detgiacmotutrangsach-backend-1:8000/api/dashboard/recent");
       const data = await response.json();
       setNewUsers(data.recent_users || []);
       setNewStories(data.recent_stories || []);
