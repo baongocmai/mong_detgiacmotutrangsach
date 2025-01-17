@@ -1,0 +1,174 @@
+.post-story-container {
+  max-width: 700px; /* Tăng chiều rộng */
+  margin: 0 auto;
+  padding: 20px;
+  background: #fdf5f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-story-title {
+  text-align: center;
+  color: #6b2d5c;
+  margin-bottom: 20px;
+  font-family: "Times New Roman", serif;
+  font-size: 28px; /* Tăng kích thước chữ */
+}
+
+.form-group {
+  margin-bottom: 20px;
+  padding: 15px; /* Giảm khoảng cách bên trong */
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Khoảng cách giữa các phần tử trong khung */
+}
+
+label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #444;
+}
+
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #555;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+textarea {
+  resize: none;
+  height: 100px;
+}
+
+.image-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.cover-preview {
+  width: 100%;
+  max-width: 200px;
+  border-radius: 8px;
+}
+
+input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.add-chapter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  color: white;
+  background: #6b2d5c;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  color: white;
+  background: #6b2d5c;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+  background: #8e3c76;
+}
+.agreement {
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 10px; /* Khoảng cách giữa checkbox và nội dung */
+  text-align: left; /* Căn trái nội dung */
+  justify-content: flex-start; /* Đảm bảo nội dung căn sát trái */
+  padding: 10px;
+  border: 1px solid #ccc; /* Tùy chọn: khung bao */
+  border-radius: 4px; /* Bo góc nhẹ */
+  background-color: #f9f9f9; /* Tùy chọn: nền sáng nhẹ */
+}
+.agreement-box {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa checkbox và nội dung */
+}
+
+
+.agreement label {
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+}
+.add-chapter-container {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  margin: 20px 0; /* Khoảng cách trên dưới */
+}
+
+.add-chapter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  color: white;
+  background: #6b2d5c;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
+}
+
+.add-chapter-button:hover {
+  background: #8e3c76;
+}
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép các checkbox xuống dòng */
+  gap: 15px; /* Khoảng cách giữa các checkbox */
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  width: calc(33.33% - 10px); /* Mỗi checkbox chiếm 1/3 chiều rộng */
+}
+
+.checkbox-item input {
+  margin-right: 10px; /* Khoảng cách giữa checkbox và label */
+}
+
+.checkbox-item label {
+  font-size: 14px;
+}
