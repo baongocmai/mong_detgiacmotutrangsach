@@ -32,21 +32,21 @@ const Settings = () => {
   const downloadStoriesData = async () => {
     try {
       // Fetch all stories data
-      const storiesResponse = await axios.get("http://localhost:8000/api/stories");
+      const storiesResponse = await axios.get("http://api:8000/api/stories");
       const storiesData = storiesResponse.data.items; // Assuming the API returns a list of stories
 
       // For each story, fetch its chapters, comments, and reports
       const storiesWithDetails = await Promise.all(
         storiesData.map(async (story) => {
           // Fetch chapters for the story
-          const chaptersResponse = await axios.get(`http://localhost:8000/api/stories/${story.id}/chapters`);
+          const chaptersResponse = await axios.get(`http://api:8000/api/stories/${story.id}/chapters`);
           const chaptersData = chaptersResponse.data.items;
 
           // For each chapter, fetch the comments
           const chaptersWithComments = await Promise.all(
             chaptersData.map(async (chapter) => {
               const commentsResponse = await axios.get(
-                `http://localhost:8000/api/stories/${story.id}/chapters/${chapter.id}/comments`
+                `http://api:8000/api/stories/${story.id}/chapters/${chapter.id}/comments`
               );
               const commentsData = commentsResponse.data.items;
 
@@ -58,7 +58,7 @@ const Settings = () => {
           );
 
           // Fetch reports for the story
-          const reportsResponse = await axios.get(`http://localhost:8000/api/reports/stories/${story.id}`);
+          const reportsResponse = await axios.get(`http://api:8000/api/reports/stories/${story.id}`);
           const reportsData = reportsResponse.data.items;
 
           return {
@@ -105,7 +105,7 @@ const Settings = () => {
           {/* Download Users Data */}
           <button
             className="backup-btn"
-            onClick={() => downloadData("http://localhost:8000/api/superadmin/users", "users_backup.json")}
+            onClick={() => downloadData("http://api:8000/api/superadmin/users", "users_backup.json")}
           >
             Download Users Data
           </button>

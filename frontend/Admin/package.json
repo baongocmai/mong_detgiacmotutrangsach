@@ -2,7 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://mong_detgiacmotutrangsach-backend-1:8000",
+  "proxy": "http://api:8000",
   "dependencies": {
     "@iconscout/react-unicons": "^2.2.1",
     "apexcharts": "^4.3.0",

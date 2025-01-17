@@ -27,7 +27,7 @@ const UsersManagement = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/admin/users`,
+          `http://api:8000/api/admin/users`,
           {
             params: {
               skip: (currentPage - 1) * recordsPerPage,
@@ -84,7 +84,7 @@ const UsersManagement = () => {
     try {
       const newStatus = currentStatus === "Active" ? "Disabled" : "Active";
       const response = await axios.patch(
-        `http://localhost:8000/api/admin/users/${userId}/status`,
+        `http://api:8000/api/admin/users/${userId}/status`,
         { status: newStatus }
       );
       const updatedUser = response.data;
@@ -103,10 +103,10 @@ const UsersManagement = () => {
   const [userDetails, setUserDetails] = useState(null);
   const openDetailsModal = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/admin/users/${userId}`);
+      const response = await axios.get(`http://api:8000/api/admin/users/${userId}`);
       setUserDetails(response.data);
 
-      const storiesResponse = await axios.get(`http://localhost:8000/api/users/${userId}/stories`, {
+      const storiesResponse = await axios.get(`http://api:8000/api/users/${userId}/stories`, {
         params: { skip: 0, limit: 10 },
       });
       setStories(storiesResponse.data.items);
@@ -136,7 +136,7 @@ const UsersManagement = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/admin/users/${userToDelete}`);
+      await axios.delete(`http://api:8000/api/admin/users/${userToDelete}`);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userToDelete));
       setFilteredUsers((prevFiltered) =>
         prevFiltered.filter((user) => user.id !== userToDelete)

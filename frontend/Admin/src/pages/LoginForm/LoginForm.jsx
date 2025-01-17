@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
 import { FaUser, FaLock } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";  // Use useNavigate instead of useHistory
+import { useNavigate, Link } from "react-router-dom";  // Use useNavigate instead of useHistory
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -13,9 +13,9 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+      
         try {
-            const response = await fetch('http://mong_detgiacmotutrangsach-backend-1:8000/api/auth/login', {
+            const response = await fetch('http://api:8000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -25,10 +25,13 @@ const LoginForm = () => {
                 const data = await response.json();
                 localStorage.setItem('token', data.access_token);
                 localStorage.setItem('role', data.role); // Lưu vai trò người dùng
-                console.log('Login successful, redirecting to Dashboard...');
-                
-                // Đảm bảo điều hướng đúng
-                navigate('/Dashboard'); // Chuyển hướng về trang Dashboard
+    
+                if (data.role === "SUPERADMIN" || data.role === "ADMIN") {
+                    console.log('Login successful, redirecting to Dashboard...');
+                    navigate('/Dashboard'); // Chuyển hướng về trang Dashboard nếu là admin hoặc superadmin
+                } else {
+                    alert('Permission Denied: You do not have admin rights.');
+                }
             } else {
                 alert('Invalid email or password! Please try again');
             }
@@ -38,8 +41,6 @@ const LoginForm = () => {
         }
     };
     
-    
-
     return (
         <div className="wrapper">
             <form onSubmit={handleSubmit}>

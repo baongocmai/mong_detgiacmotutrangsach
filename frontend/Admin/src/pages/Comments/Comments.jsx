@@ -23,16 +23,16 @@ const Comments = () => {
   // Fetch all stories and their comments from the API
   const fetchCommentsForAllStories = async () => {
     try {
-      const storiesResponse = await axios.get("http://localhost:8000/api/stories"); // Fetch all stories
+      const storiesResponse = await axios.get("http://api:8000/api/stories"); // Fetch all stories
       const stories = storiesResponse.data;
 
       const allComments = [];
       for (let story of stories) {
-        const chaptersResponse = await axios.get(`http://localhost:8000/api/stories/${story.id}/chapters`);
+        const chaptersResponse = await axios.get(`http://api:8000/api/stories/${story.id}/chapters`);
         const chapters = chaptersResponse.data;
 
         for (let chapter of chapters) {
-          const commentsResponse = await axios.get(`http://localhost:8000/api/stories/${story.id}/chapters/${chapter.chapter_id}/comments`);
+          const commentsResponse = await axios.get(`http://api:8000/api/stories/${story.id}/chapters/${chapter.chapter_id}/comments`);
           allComments.push(...commentsResponse.data);
         }
       }

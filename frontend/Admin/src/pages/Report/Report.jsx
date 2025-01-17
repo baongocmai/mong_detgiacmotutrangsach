@@ -26,7 +26,7 @@ const Report = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/reports");
+      const response = await axios.get("http://api:8000/api/reports");
       setReports(response.data.items);
       setFilteredReports(response.data.items);
     } catch (error) {
@@ -66,7 +66,7 @@ const Report = () => {
   const handleDeleteReport = async (reportId) => {
     if (window.confirm("Are you sure you want to delete this report?")) {
       try {
-        await axios.delete(`http://localhost:8000/api/reports/${reportId}`);
+        await axios.delete(`http://api:8000/api/reports/${reportId}`);
         alert("Report deleted successfully!");
         fetchReports();
       } catch (error) {
@@ -81,7 +81,7 @@ const Report = () => {
 
   const handleSendNotificationContent = async () => {
     try {
-      await axios.patch(`http://localhost:8000/api/reports/${selectedReportId}`, {
+      await axios.patch(`http://api:8000/api/reports/${selectedReportId}`, {
         status: "COMPLETED", // Cập nhật trạng thái báo cáo là đã xử lý
         email_content: selectedReason, // Lý do gửi email
       });

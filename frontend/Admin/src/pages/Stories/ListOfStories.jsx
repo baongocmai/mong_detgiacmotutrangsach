@@ -24,7 +24,7 @@ const ListOfStories = () => {
 
   const fetchStories = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/stories", {
+      const response = await axios.get("http://api:8000/api/stories", {
         params: {
           skip: (currentPage - 1) * recordsPerPage,
           limit: recordsPerPage,
@@ -39,7 +39,7 @@ const ListOfStories = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/categories");
+      const response = await axios.get("http://api:8000/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -47,7 +47,7 @@ const ListOfStories = () => {
   };
   const fetchReports = async (storyId) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/reports/stories/${storyId}`);
+      const response = await axios.get(`http://api:8000/api/reports/stories/${storyId}`);
       setSelectedStoryReports(response.data);
     } catch (error) {
       console.error("Error fetching reports:", error);
@@ -107,7 +107,7 @@ const ListOfStories = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/stories/${storyToDelete}`);
+      await axios.delete(`http://api:8000/api/stories/${storyToDelete}`);
       setStories(stories.filter((story) => story.id !== storyToDelete));
       setFilteredStories(filteredStories.filter((story) => story.id !== storyToDelete));
       closeDeleteModal();

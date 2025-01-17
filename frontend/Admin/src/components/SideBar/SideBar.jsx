@@ -38,7 +38,7 @@ const SideBar = () => {
         </div>
         <div className="menu">
           <ul>
-            <li className="menu-item" onClick={() => handleNavigation("/")}>
+            <li className="menu-item" onClick={() => handleNavigation("/Dashboard")}>
               <FaClipboard />
               {isOpen && <span>Dashboard</span>}
             </li>
