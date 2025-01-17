@@ -1,0 +1,123 @@
+
+.book-title {
+    text-align: center !important;
+    margin: 0;
+  }
+  
+.book-actions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(53, 53, 53, 0.5); /* Nền tối */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Đảm bảo popup nằm trên cùng */
+  }
+  .popup-content h3 {
+    font-size: 26px;
+    color: rgb(243, 111, 140);
+  }
+  .popup-content p {
+    font-size: 18px;
+    color: white;
+  }
+  
+  
+  .popup-content {
+    /* Rectangle 27 */
+    /* Rectangle 15 */
+
+    box-sizing: border-box;
+    background: rgba(49, 49, 49, 0.9);
+    border-width: 3px 4px 4px 3px;
+    border-style: solid;
+    border-color: rgba(239, 108, 133, 0.9);
+    border-radius: 40px;
+    padding: 40px;
+
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Thêm hiệu ứng đổ bóng */
+    z-index: 10000; /* Đảm bảo nội dung popup nằm trên nền tối */
+  }
+  
+.popup-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.popup-actions .btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.popup-actions .btn.confirm {
+    background: #df7286;
+    color: white;
+}
+
+
+.popup-actions .btn.confirm:hover {
+    background: #E53E5D;
+    color: white;
+}
+
+.popup-actions .btn.cancel {
+    background: grey;
+    color: white;
+}
+.popup-actions .btn.cancel:hover {
+    background: #413f3f;
+    color: white;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .book-info {
+    position: relative; /* Để sử dụng position cho icon */
+    padding-bottom: 40px;
+  }
+  
+  .action-buttons {
+    position: absolute;
+    right: 10px; /* Điều chỉnh khoảng cách từ bên phải */
+    display: flex;
+    gap: 10px;
+    bottom: 10px; /* Đặt icon sát mép dưới */
+    right: 10px; /* Đặt icon sát mép phải */
+    display: flex;
+    gap: 10px;
+  }
+  
+  .icon {
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .icon.edit-icon, .icon.delete-icon {
+    color: #7777;
+  }
+  
+  .icon.edit-icon:hover {
+    color: #367AF2; /* Màu cho icon chỉnh sửa */
+  }
+  .icon.delete-icon:hover {
+    color: #E53E5D; /* Màu cho icon chỉnh sửa */
+  }
+  
