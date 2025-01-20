@@ -1,0 +1,49 @@
+.banner-sliderr {
+  position: relative;
+  width: 90%;
+  height: fit-content; /* Tự điều chỉnh chiều cao dựa trên nội dung */
+  margin: auto;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-imagee {
+  width: 100%;
+  height: auto; /* Giữ nguyên tỷ lệ của hình ảnh */
+  object-fit: contain; /* Đảm bảo không cắt bất kỳ phần nào của hình ảnh */
+  transition: opacity 0.5s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Nút điều hướng */
+.banner-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bolder;
+  color: #ff67a1;
+  z-index: 10;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+  transition: background 0.3s, transform 0.3s;
+}
+
+.banner-button:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+  left: 30px;
+}
+
+.next-btn {
+  right: 30px;
+}

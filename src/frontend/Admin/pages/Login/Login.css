@@ -1,0 +1,125 @@
+/* Giao diện tổng thể */
+.wrapper {
+    width: 500px;
+    max-height: 500px;
+    background-color: white;
+    color: black;
+    text-align: center;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 50px pink;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    overflow: auto;
+}
+
+.wrapper:hover {
+    animation: animate 8s linear infinite;
+}
+
+@keyframes animate {
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+.wrapper h1 {
+    font-size: 30px;
+    text-align: center;
+    color: purple;
+}
+
+.wrapper h2 {
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(128, 0, 128, 0.7);
+    font-weight: 400;
+}
+
+/* Hộp nhập liệu */
+.wrapper .input-box {
+    position: relative;
+    width: 370px;
+    height: 44px;
+    background-color: rgb(229, 183, 229);
+    margin: 10px auto;
+    border-radius: 50px;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: rgb(243, 223, 250);
+    font-size: 17px;
+    border: none;
+    border-radius: 30px;
+    padding: 20px 70px 20px 15px;
+}
+
+.input-box input::placeholder {
+    color: rgb(163, 154, 154);
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+/* Giao diện Remember me và Forgot password */
+.wrapper .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: 20px;
+}
+
+.remember-forgot label input {
+    accent-color: pink;
+    margin-right: 4px;
+}
+
+.custom-link {
+    color: purple;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.custom-link:hover {
+    text-decoration: underline;
+    color: palevioletred;
+}
+/* Nút đăng nhập */
+.wrapper button {
+    width: 200px; /* Độ rộng nút */
+    height: 40px; /* Chiều cao nút */
+    margin-top: 20px; /* Khoảng cách từ trên xuống */
+    background-color: rgb(218, 112, 214); /* Màu nền */
+    color: white; /* Màu chữ */
+    border: none; /* Xóa viền */
+    border-radius: 20px; /* Bo góc */
+    font-size: 16px; /* Cỡ chữ */
+    font-weight: bold; /* Độ đậm */
+    cursor: pointer; /* Con trỏ dạng nút */
+    text-align: center; /* Căn giữa nội dung trong nút */
+    transition: all 0.3s ease; /* Hiệu ứng chuyển đổi */
+    align-self: center; /* Đảm bảo nút được căn giữa trong flex */
+}
+
+.wrapper button:hover {
+    background-color: rgb(239, 102, 102); /* Màu nền khi hover */
+    color: white;
+    font-weight: bold;
+    font-style: italic; /* Kiểu chữ nghiêng khi hover */
+}

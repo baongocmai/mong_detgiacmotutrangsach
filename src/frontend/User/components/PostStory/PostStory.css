@@ -1,0 +1,111 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ 
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.outerBox {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+label {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+input, textarea, select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+textarea {
+  text-align: left;            /* Căn trái nội dung trong textarea */
+  width: 100%;                 /* Đảm bảo textarea chiếm hết chiều rộng của ô nhập liệu */
+  padding: 10px;               /* Thêm khoảng cách trong ô nhập liệu */
+  box-sizing: border-box;      /* Đảm bảo padding không làm thay đổi kích thước của ô nhập */
+}
+
+input[type="text"] {
+  text-align: left;            /* Căn trái nội dung trong input */
+  width: 100%;                 /* Đảm bảo input chiếm hết chiều rộng của ô nhập liệu */
+  padding: 10px;               /* Thêm khoảng cách trong ô nhập liệu */
+  box-sizing: border-box;      /* Đảm bảo padding không làm thay đổi kích thước của ô nhập */
+}
+
+
+select {
+  width: 100%;
+}
+
+.categoriesGrid {
+  display: flex;               /* Sử dụng flexbox để căn chỉnh các phần tử theo hàng */
+  flex-wrap: wrap;             /* Cho phép các phần tử xuống dòng nếu không đủ không gian */
+  gap: 15px;                   /* Khoảng cách giữa các ô kiểm */
+  justify-content: start;      /* Căn lề trái cho các ô kiểm */
+}
+
+.checkboxWrapper {
+  display: flex;               /* Sử dụng flexbox cho mỗi checkbox */
+  align-items: center;         /* Căn giữa các checkbox và nhãn */
+  margin-bottom: 10px;          /* Khoảng cách giữa các checkbox */
+}
+
+.checkboxWrapper input {
+  margin-right: 8px;           /* Khoảng cách giữa checkbox và nhãn */
+}
+
+
+.checkboxWrapper {
+  width: calc(33.33% - 10px); /* Chia đều mỗi phần tử trong 3 cột */
+  box-sizing: border-box;
+  padding: 5px;
+}
+
+.submitButton {
+  background-color: #af4c7a;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #db72a1;
+}
